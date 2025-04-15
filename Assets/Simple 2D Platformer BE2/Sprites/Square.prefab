@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -103,6 +103,7 @@ MonoBehaviour:
   areaSize: {x: 0, y: 0}
   rectanglePrefab: {fileID: 6197731100201858126}
   rotationAngle: 90
+  tilemap: {fileID: 0}
 --- !u!114 &-3708813797249918876
 MonoBehaviour:
   m_ObjectHideFlags: 0
