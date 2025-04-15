@@ -81,7 +81,7 @@ public class RotateInArea : MonoBehaviour
             areaSize.x = Mathf.Max(0, areaSize.x - 0.1f); // 0より小さくならないよう最小値設定
             areaSize.y = Mathf.Max(0, areaSize.y - 0.1f); // 0より小さくならないよう最小値設定
 
-            // 사각형의 중심 위치 설정
+            // 四角形の中心位置設定
             areaCenter.position = rectanglePrefab.transform.position;
         }
     }
@@ -180,7 +180,7 @@ public class RotateInArea : MonoBehaviour
         foreach (var (oldPos, _, _, _) in tilesToMove)
         {
             tilemap.SetTile(oldPos, null);
-            tilemap.SetTransformMatrix(oldPos, Matrix4x4.identity); // 초기화
+            tilemap.SetTransformMatrix(oldPos, Matrix4x4.identity); // 初期化
         }
 
         // 3. コピー:新しい位置に回転した後、再配置
@@ -235,7 +235,7 @@ public class RotateInArea : MonoBehaviour
         // 3. コピー:新しい位置に回転した後、再配置
         foreach (var (_, newPos, tile, matrix) in tilesToMove)
         {
-            Quaternion newRotation = matrix.rotation * Quaternion.Euler(180, 0, 0); // X축 기준 회전
+            Quaternion newRotation = matrix.rotation * Quaternion.Euler(180, 0, 0); // X軸回転
             Matrix4x4 newMatrix = Matrix4x4.TRS(Vector3.zero, newRotation, Vector3.one);
 
             tilemap.SetTile(newPos, tile);
