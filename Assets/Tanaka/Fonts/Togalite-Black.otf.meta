@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e382119eba9f33f46a66052efcbfd76f
+guid: 1f05fe1e78660e144af31afd6ea91970
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Makinas
+  - Togalite
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
