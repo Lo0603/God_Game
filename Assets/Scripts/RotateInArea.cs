@@ -50,6 +50,7 @@ public class RotateInArea : MonoBehaviour
             UpdateAreaProperties();
             RotateTilesYAxis();
             RotateObjectsYAxis();
+            //FlipPlayerDirection(); // 移動方向反転
         }
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -57,6 +58,7 @@ public class RotateInArea : MonoBehaviour
             UpdateAreaProperties();
             RotateTilesXAxis();
             RotateObjectsXAxis();
+            //FlipPlayerGravity();  // 重力反転
         }
     }
 
@@ -102,6 +104,7 @@ public class RotateInArea : MonoBehaviour
             Vector3 pos = collider.transform.position;
             pos.y = 2 * areaCenter.position.y - pos.y; // 中心を基準にY位置を反転
             collider.transform.position = pos;
+            FlipPlayerGravity();  // 重力反転
         }
     }
 
@@ -122,6 +125,7 @@ public class RotateInArea : MonoBehaviour
             Vector3 pos = collider.transform.position;
             pos.x = 2 * areaCenter.position.x - pos.x; // 中心を基準にX位置を反転
             collider.transform.position = pos;
+            FlipPlayerDirection(); // 移動方向反転
         }
     }
 
@@ -240,6 +244,35 @@ public class RotateInArea : MonoBehaviour
 
             tilemap.SetTile(newPos, tile);
             tilemap.SetTransformMatrix(newPos, newMatrix);
+        }
+    }
+
+
+    void FlipPlayerGravity()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+       
+        if (player != null)
+        {
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            PlayerMoving playerScript = player.GetComponent<PlayerMoving>();
+            if (rb != null && playerScript != null)
+            {
+                playerScript.FlipGravity();  // セーブされた重力値を反転
+            }
+        }
+    }
+
+    void FlipPlayerDirection()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            PlayerMoving move = player.GetComponent<PlayerMoving>();
+            if (move != null)
+            {
+                move.ReversDirection();
+            }
         }
     }
 
