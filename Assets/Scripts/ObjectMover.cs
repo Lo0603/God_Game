@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ObjectMover : MonoBehaviour
 {
-    public Vector2 gridMove = new Vector2(1.0f, 1.0f); // この値はタイルの大きさに合わせて調整
+    public Vector2 gridMove = new Vector2(5.0f, 5.0f); // この値はタイルの大きさに合わせて調整
     private GameObject mouseObject;
     private CameraFollow cameraFollow;
     // Start is called before the first frame update
@@ -17,7 +17,7 @@ public class ObjectMover : MonoBehaviour
 
     void Update()
     {
-        MoveObject();
+        //MoveObject();
         HandleBackspace();
         Debug.Log("Moving " + gridMove + " units.");
     }
@@ -39,13 +39,15 @@ public class ObjectMover : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
             // 四角形の最後の位置を保存し、各座標を四捨五入してタイルマップに合わせる
-            Vector3 lastPosition = new Vector3(Mathf.Round(transform.position.x), 
-                Mathf.Round(transform.position.y), transform.position.z);
+            // 타일 단위로 스냅 (ex: 5 단위)
+            float snappedX = Mathf.Round(transform.position.x / 5) * 5;
+            float snappedY = Mathf.Round(transform.position.y / 5) * 5;
+            Vector3 snappedPosition = new Vector3(snappedX, snappedY, transform.position.z);
             Destroy(gameObject); // 現在のオブジェクト削除
             if (mouseObject)
             {
                 mouseObject.SetActive(true); // マウスオブジェクトの有効化
-                mouseObject.transform.position = lastPosition;
+                mouseObject.transform.position = snappedPosition;
             }
             if (cameraFollow && mouseObject)
             {

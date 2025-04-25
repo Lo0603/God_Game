@@ -1,34 +1,47 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Cursor : MonoBehaviour
 {
-    public Vector2 gridMove = new Vector2(1.0f, 1.0f); // ‚±‚Ì’l‚Íƒ^ƒCƒ‹‚Ì‘å‚«‚³‚É‡‚í‚¹‚Ä’²®
+    public Vector2 gridMove = new Vector2(5.0f, 5.0f); // ã‚¿ã‚¤ãƒ«ã‚µã‚¤ã‚º
+    private Camera mainCam;
+
+    void Start()
+    {
+        mainCam = Camera.main;
+    }
 
     void Update()
     {
-        Vector3 move = new Vector3(0, 0, 0);
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            move.y += gridMove.y;
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            move.y -= gridMove.y;
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            move.x -= gridMove.x;
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            move.x += gridMove.x;
-        }
+        Vector3 move = Vector3.zero;
+
+        if (Input.GetKeyDown(KeyCode.W)) move.y += gridMove.y;
+        if (Input.GetKeyDown(KeyCode.S)) move.y -= gridMove.y;
+        if (Input.GetKeyDown(KeyCode.A)) move.x -= gridMove.x;
+        if (Input.GetKeyDown(KeyCode.D)) move.x += gridMove.x;
 
         if (move != Vector3.zero)
         {
-            transform.position += move; 
-        } // ƒ^ƒCƒ‹ƒTƒCƒY’PˆÊ‚ÅˆÚ“®
+            Vector3 targetPos = transform.position + move;
+
+            // ì¹´ë©”ë¼ ê²½ê³„ ê³„ì‚°
+            float vertExtent = mainCam.orthographicSize;
+            float horzExtent = vertExtent * Screen.width / Screen.height;
+
+            Vector3 camPos = mainCam.transform.position;
+
+            float minX = camPos.x - horzExtent;
+            float maxX = camPos.x + horzExtent;
+            float minY = camPos.y - vertExtent;
+            float maxY = camPos.y + vertExtent;
+
+            // ì»¤ì„œ í¬ê¸°ë¥¼ ê³ ë ¤í•˜ì§€ ì•ŠëŠ” ê²½ìš°: íƒ€ì¼ ì¤‘ì•™ê¹Œì§€ë§Œ ì œì–´
+            if (targetPos.x >= minX && targetPos.x <= maxX &&
+                targetPos.y >= minY && targetPos.y <= maxY)
+            {
+                transform.position = targetPos;
+            }
+        }
     }
 }

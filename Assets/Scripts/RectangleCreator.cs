@@ -60,7 +60,7 @@ public class RectangleCreator : MonoBehaviour
             currentRectangle = null;    // 参照除去
             isCreating = false;         // 生成モード終了
             mouseObject.SetActive(true); // マウス オブジェクトの再アクティブ化
-            cameraFollow.SetTarget(mouseObject.transform); // カメラターゲットをマウスオブジェクトに変更
+            //cameraFollow.SetTarget(mouseObject.transform); // カメラターゲットをマウスオブジェクトに変更
 
         }
     }
@@ -70,11 +70,11 @@ public class RectangleCreator : MonoBehaviour
     {
         isCreating = true;
 
-        if (playerScript != null)
-        {
-            playerScript.SetMoving(false);        // 자동 이동 멈춤
-            playerScript.SetGravity(false);       // 중력 제거
-        }
+        //if (playerScript != null)
+        //{
+        //    playerScript.SetMoving(false);        // 자동 이동 멈춤
+        //    playerScript.SetGravity(false);       // 중력 제거
+        //}
 
         initialPosition = transform.position;  // 現在のオブジェクトの位置を使用する
         currentRectangle = Instantiate(rectanglePrefab, initialPosition, Quaternion.identity);
@@ -109,7 +109,9 @@ public class RectangleCreator : MonoBehaviour
         isCreating = false;
 
         mouseObject.SetActive(false);
-        cameraFollow.SetTarget(currentRectangle.transform); // カメラ保持
-        //currentRectangle = null;  
+        //cameraFollow.SetTarget(currentRectangle.transform); // カメラ保持
+        //currentRectangle = null;
+        //ここでObjectたちの動き、重力などの処理変更
+
     }
 }

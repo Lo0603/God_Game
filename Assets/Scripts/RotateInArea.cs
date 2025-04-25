@@ -25,20 +25,7 @@ public class RotateInArea : MonoBehaviour
 
     void Update()
     {
-        // 'L'キーを押す時、四角形内のオブジェクトを回転
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            // 四角形プリファブのTransformから中心位置と大きさを取得
-            UpdateAreaProperties();
-            RotateObjectsXAxis();
-        }
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            UpdateAreaProperties();
-            RotateObjectsYAxis();
-        }
-
+        // tile 削除処理
         if (Input.GetKeyDown(KeyCode.X))
         {
             UpdateAreaProperties();

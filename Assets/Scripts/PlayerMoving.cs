@@ -48,11 +48,11 @@ public class PlayerMoving : MonoBehaviour
             isMoving = !isMoving;
         }
 
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            moveDirection *= -1;
-            FlipSprite();  // Sprite反転
-        }
+        //if (Input.GetKeyDown(KeyCode.V))
+        //{
+        //    moveDirection *= -1;. z
+        //    FlipSprite();  // Sprite反転
+        //}
     }
 
     public void ReversDirection()
@@ -94,7 +94,7 @@ public class PlayerMoving : MonoBehaviour
         if (rb != null)
         {
             storedGravity *= -1f;
-            rb.gravityScale = storedGravity;
+            //rb.gravityScale = storedGravity;
         }
     }
 
