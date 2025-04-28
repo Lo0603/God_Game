@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Tanaka/Scenes/Fade2.unity
     guid: adf5d66bd99cb1643888a47bc6316e36
+  - enabled: 1
+    path: Assets/Tanaka/Scenes/SampleButton.unity
+    guid: 129da09458aa6454ea020ef10c87dc47
   m_configObjects: {}
