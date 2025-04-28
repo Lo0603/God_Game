@@ -20,12 +20,12 @@ public class FadeManager : MonoBehaviour
 		fade.FadeOut(fadeTime);
 	}
 
-	public void SceneTransition(int sceneNum)
+	public void SceneTransition(string sceneNum)
 	{
 		// フェードを掛けてからシーン遷移
 		fade.FadeIn(fadeTime, () =>
 		{
-			SceneManager.LoadScene("Fade" + sceneNum);
+			SceneManager.LoadScene(sceneNum);
 		});
 
 	}
