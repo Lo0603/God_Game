@@ -7,12 +7,21 @@ public class ObjectMover : MonoBehaviour
     public Vector2 gridMove = new Vector2(5.0f, 5.0f); // この値はタイルの大きさに合わせて調整
     private GameObject mouseObject;
     private CameraFollow cameraFollow;
+    private RectangleCreator rectangleCreator;
+    private RotateInArea rotateInArea;
     // Start is called before the first frame update
     void Start()
     {
         // Sceneでマウスオブジェクトとカメラフォローコンポーネントを検索して割り当て
         mouseObject = GameObject.Find("HandCursor"); // 「HandCursor」は、マウス オブジェクトの名前と一致する必要があります。
         cameraFollow = GameObject.FindObjectOfType<CameraFollow>(); //シーンでCameraFollowコンポーネントを探します。
+
+        rectangleCreator = GameObject.FindObjectOfType<RectangleCreator>();
+        GameObject Square = GameObject.FindGameObjectWithTag("Square");
+        if(Square != null)
+        {
+            rotateInArea = Square.GetComponent<RotateInArea>();
+        }
     }
 
     void Update()
@@ -38,8 +47,11 @@ public class ObjectMover : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
+            if (rotateInArea.IsFading()) { return; }
+            RestoreObjectsInRectangle();
+
             // 四角形の最後の位置を保存し、各座標を四捨五入してタイルマップに合わせる
-            // 타일 단위로 스냅 (ex: 5 단위)
+            // tile単位でsnap(例：5単位)
             float snappedX = Mathf.Round(transform.position.x / 5) * 5;
             float snappedY = Mathf.Round(transform.position.y / 5) * 5;
             Vector3 snappedPosition = new Vector3(snappedX, snappedY, transform.position.z);
@@ -53,6 +65,29 @@ public class ObjectMover : MonoBehaviour
             {
                 cameraFollow.SetTarget(mouseObject.transform); // カメラターゲットをマウスオブジェクトに設定
             }
+        }
+    }
+
+    void RestoreObjectsInRectangle() // 四角が閉じた後処理
+    {
+        if (rectangleCreator == null) return;
+
+        foreach (GameObject obj in rectangleCreator.GetContainedObjects())
+        {
+            if (obj == null) continue;
+
+            if (obj.CompareTag("Player"))
+            {
+                PlayerMoving moveScript = obj.GetComponent<PlayerMoving>();
+                if (moveScript != null)
+                {
+                    moveScript.SetMoving(true); 
+                    moveScript.SetGravity(true); 
+                }
+            }
+
+            // 必要ならここに追加
+            // if (obj.CompareTag("Enemy")) { ... }
         }
     }
 }

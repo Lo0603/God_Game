@@ -25,7 +25,7 @@ public class Cursor : MonoBehaviour
         {
             Vector3 targetPos = transform.position + move;
 
-            // 카메라 경계 계산
+            // カメラ境界計算
             float vertExtent = mainCam.orthographicSize;
             float horzExtent = vertExtent * Screen.width / Screen.height;
 
@@ -36,7 +36,7 @@ public class Cursor : MonoBehaviour
             float minY = camPos.y - vertExtent;
             float maxY = camPos.y + vertExtent;
 
-            // 커서 크기를 고려하지 않는 경우: 타일 중앙까지만 제어
+            // カーソル サイズを考慮しない場合:タイル中央まで制御
             if (targetPos.x >= minX && targetPos.x <= maxX &&
                 targetPos.y >= minY && targetPos.y <= maxY)
             {

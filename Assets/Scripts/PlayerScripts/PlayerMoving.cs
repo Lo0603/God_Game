@@ -22,6 +22,7 @@ public class PlayerMoving : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        storedGravity = rb.gravityScale;
         originalGravity = rb.gravityScale;
     }
 
@@ -46,6 +47,7 @@ public class PlayerMoving : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.B))
         {
             isMoving = !isMoving;
+            rb.gravityScale = storedGravity;
         }
 
         //if (Input.GetKeyDown(KeyCode.V))
@@ -94,6 +96,10 @@ public class PlayerMoving : MonoBehaviour
         if (rb != null)
         {
             storedGravity *= -1f;
+            if(isMoving)
+            {
+                rb.gravityScale *= -1f;
+            }
             //rb.gravityScale = storedGravity;
         }
     }

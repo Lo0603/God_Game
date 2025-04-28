@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: -6230276881107487230}
   - component: {fileID: -3708813797249918876}
   - component: {fileID: -873228080477443964}
-  m_Layer: 0
+  - component: {fileID: -2311680242098420644}
+  m_Layer: 8
   m_Name: Square
-  m_TagString: Untagged
+  m_TagString: Square
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -117,6 +118,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transparency: 0.5
+  darkenTime: 1
+  brightenTime: 1
+  targetColor: {r: 0.8773585, g: 0.7687042, b: 0.18623178, a: 1}
 --- !u!114 &-873228080477443964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,3 +134,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridMove: {x: 0, y: 0}
+--- !u!114 &-2311680242098420644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6197731100201858126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28c2fe581a5700447a0adb405aaa1d1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particlePrefab: {fileID: 5455535092022154546, guid: f97e963fc00056643b8dfc1d1af5e167, type: 3}

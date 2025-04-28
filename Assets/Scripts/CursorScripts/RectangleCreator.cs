@@ -6,12 +6,14 @@ public class RectangleCreator : MonoBehaviour
 {
     public GameObject rectanglePrefab;
     public GameObject mouseObject;
-    public CameraFollow cameraFollow;
     private Vector3 initialPosition;
     private GameObject currentRectangle;
-    private bool isCreating = false;
     private Vector3 gridCellSize;
     private PlayerMoving playerScript;
+    private bool isCreating = false;
+
+    // 四角を生成した時点で範囲中にあるオブジェクトをセーブするリスト
+    private List<GameObject> containedObjects = new List<GameObject>();
 
     void Start()
     {
@@ -51,11 +53,6 @@ public class RectangleCreator : MonoBehaviour
         // バックスペースを押して戻る
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            if (playerScript != null)
-            {
-                playerScript.SetMoving(true);         // 이동 다시 시작
-                playerScript.SetGravity(true);        // 중력 복구
-            }
             Destroy(currentRectangle);  // 現在の四角形オブジェクトの削除
             currentRectangle = null;    // 参照除去
             isCreating = false;         // 生成モード終了
@@ -72,8 +69,8 @@ public class RectangleCreator : MonoBehaviour
 
         //if (playerScript != null)
         //{
-        //    playerScript.SetMoving(false);        // 자동 이동 멈춤
-        //    playerScript.SetGravity(false);       // 중력 제거
+        //    playerScript.SetMoving(false); 
+        //    playerScript.SetGravity(false); 
         //}
 
         initialPosition = transform.position;  // 現在のオブジェクトの位置を使用する
@@ -107,11 +104,49 @@ public class RectangleCreator : MonoBehaviour
     void FinishCreatingRectangle()
     {
         isCreating = false;
-
         mouseObject.SetActive(false);
-        //cameraFollow.SetTarget(currentRectangle.transform); // カメラ保持
-        //currentRectangle = null;
-        //ここでObjectたちの動き、重力などの処理変更
+
+        // 四角形の中にあるオブジェクトを探す
+        FindObjectsInRectangle();
+
+        // 見つけたオブジェクトに対して望む処理をここで
+        foreach (GameObject obj in containedObjects)
+        {
+            if (obj.CompareTag("Player"))
+            {
+                PlayerMoving moveScript = obj.GetComponent<PlayerMoving>();
+                if (moveScript != null)
+                {
+                    moveScript.SetMoving(false);
+                    moveScript.SetGravity(false);
+                }
+            }
+
+            // 今後、他のオブジェクトも追加可能
+            // if (obj.CompareTag("Enemy")) { ... }
+            // if (obj.CompareTag("Item")) { ... }
+        }
 
     }
+
+
+    void FindObjectsInRectangle()    //  四角形の中のオブジェクトを探す関数
+    {
+        containedObjects.Clear();    // リスト初期化
+
+        Vector2 center = currentRectangle.transform.position;
+        Vector2 size = currentRectangle.transform.localScale;
+
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(center, size, 0f);
+
+        foreach (Collider2D collider in colliders)
+        {
+            containedObjects.Add(collider.gameObject);
+        }
+    }
+
+
+    public bool IsCreating() { return isCreating; } 
+
+    public List<GameObject> GetContainedObjects() { return containedObjects; }
 }

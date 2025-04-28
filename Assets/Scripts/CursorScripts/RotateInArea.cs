@@ -11,7 +11,10 @@ public class RotateInArea : MonoBehaviour
     public float rotationAngle = 90f;  // 回転角度
     public Tilemap tilemap;
 
-
+    private ParticleSpawner particleSpawner;
+    private RectangleCreator rectangleCreator;
+    private bool canOperate = true;  // 操作可能かどうか
+    private bool isFading = false;   // 演出中か確認
     void Start()
     {
         if (tilemap == null)
@@ -21,10 +24,18 @@ public class RotateInArea : MonoBehaviour
             //tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();    　　　　　　　// 名前で探す方法
             //tilemap = GameObject.FindGameObjectWithTag("Tilemap").GetComponent<Tilemap>(); // tagで探す方法
         }
+
+        rectangleCreator = FindObjectOfType<RectangleCreator>();
+        particleSpawner = FindObjectOfType<ParticleSpawner>();
     }
 
     void Update()
     {
+        // 四角生成中なら操作禁止
+        canOperate = rectangleCreator == null ? true : rectangleCreator.IsCreating() == false;
+
+        if (!canOperate || isFading) return;
+
         // tile 削除処理
         if (Input.GetKeyDown(KeyCode.X))
         {
@@ -35,17 +46,50 @@ public class RotateInArea : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             UpdateAreaProperties();
-            RotateTilesYAxis();
-            RotateObjectsYAxis();
-            //FlipPlayerDirection(); // 移動方向反転
+
+            if (HasBlockedTagInArea(new string[] { "Blocked" }))
+            {
+                isFading = true;
+                SpriteColor spriteColor = rectanglePrefab.GetComponent<SpriteColor>();
+                spriteColor.StartBlinkRed(() => {
+                    // 点滅後処理
+
+                    isFading = false;
+                    Debug.Log("禁止");
+                });
+
+                Debug.Log("回転不可");
+                return;
+            }
+
+            if (particleSpawner != null) // particle
+                particleSpawner.PlayParticlesAround(rectanglePrefab.transform.position, rectanglePrefab.transform.localScale);
+            StartFadeAndRotate(isXAxis: false);  // Y軸回転
         }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
+
             UpdateAreaProperties();
-            RotateTilesXAxis();
-            RotateObjectsXAxis();
-            //FlipPlayerGravity();  // 重力反転
+
+            if (HasBlockedTagInArea(new string[] { "Blocked" }))
+            {
+                isFading = true;
+                SpriteColor spriteColor = rectanglePrefab.GetComponent<SpriteColor>();
+                spriteColor.StartBlinkRed(() => {
+                    // 点滅後処理
+
+                    isFading = false;
+                    Debug.Log("禁止");
+                });
+
+                Debug.Log("回転不可");
+                return;
+            }
+
+            if (particleSpawner != null) // particle
+                particleSpawner.PlayParticlesAround(rectanglePrefab.transform.position, rectanglePrefab.transform.localScale);
+            StartFadeAndRotate(isXAxis: true);   // X軸回転
         }
     }
 
@@ -235,6 +279,56 @@ public class RotateInArea : MonoBehaviour
     }
 
 
+
+    void StartFadeAndRotate(bool isXAxis)
+    {
+        if (rectanglePrefab != null)
+        {
+            SpriteColor spriteColor = rectanglePrefab.GetComponent<SpriteColor>();
+            if (spriteColor != null)
+            {
+                isFading = true; // 始まったときtrue
+
+                spriteColor.StartFade(
+                    () => {
+                        // 暗くなった後->回転／反転 処理
+                        if (isXAxis)
+                        {
+                            RotateTilesXAxis();
+                            RotateObjectsXAxis();
+                        }
+                        else
+                        {
+                            RotateTilesYAxis();
+                            RotateObjectsYAxis();
+                        }
+                    },
+                    () => {
+                        // 明るくなった後処理
+                        isFading = false;
+                    }
+                );
+            }
+            else
+            {
+                // SpriteColorがないとすぐに回転
+                if (isXAxis)
+                {
+                    RotateTilesXAxis();
+                    RotateObjectsXAxis();
+                }
+                else
+                {
+                    RotateTilesYAxis();
+                    RotateObjectsYAxis();
+                }
+            }
+        }
+    }
+
+
+
+
     void FlipPlayerGravity()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -262,6 +356,40 @@ public class RotateInArea : MonoBehaviour
             }
         }
     }
+
+    // tilemapCollider更新
+    void ForceRefreshTilemapCollider()
+    {
+        TilemapCollider2D collider = tilemap.GetComponent<TilemapCollider2D>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+            collider.enabled = true;
+        }
+    }
+
+
+    // 四角の中に禁止TAGオブジェクトがあるか確認
+    bool HasBlockedTagInArea(string[] blockedTags)
+    {
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(areaCenter.position, new Vector2(areaSize.x, areaSize.y), 0);
+
+        foreach (Collider2D collider in colliders)
+        {
+            foreach (string tag in blockedTags)
+            {
+                if (collider.CompareTag(tag))
+                {
+                    return true; // 止されたTAG発見
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public bool IsFading() { return isFading; }
+
 
     // 四角形の領域を視覚的に確認するために使用 (デバッグ目的)
     void OnDrawGizmosSelected()
