@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class ManuManager : MonoBehaviour
 {
@@ -49,8 +50,6 @@ public class ManuManager : MonoBehaviour
 
 	public void OnPlay()
 	{
-		Debug.Log("Play‰Ÿ‚µ‚½");
-
 		exitConfirmMenu.SetActive(false);
 		playSubMenu.SetActive(true);
 
@@ -61,8 +60,6 @@ public class ManuManager : MonoBehaviour
 
 	public void OnExit()
 	{
-		Debug.Log("Exit‰Ÿ‚µ‚½");
-
 		playSubMenu.SetActive(false);
 		exitConfirmMenu.SetActive(true);
 
@@ -73,8 +70,7 @@ public class ManuManager : MonoBehaviour
 	// Option‚É‘JˆÚ‚·‚é
 	public void OnOption()
 	{
-		Debug.Log("Option‰Ÿ‚µ‚½");
-		// SceneManager.LoadScene("Option");
+		SceneManager.LoadScene("Option");
 	}
 
 	// ƒQ[ƒ€‚ğI—¹‚·‚é
@@ -99,12 +95,12 @@ public class ManuManager : MonoBehaviour
 	// Stage1‚É‘JˆÚ‚·‚é
 	public void OnStartGame()
 	{
-		// SceneManager.LoadScene("Stage1");
+		SceneManager.LoadScene("Stage1");
 	}
 
 	// Select‚É‘JˆÚ‚·‚é
 	public void OnStageSelect()
 	{
-		// SceneManager.LoadScene("Select");
+		SceneManager.LoadScene("Select");
 	}
 }
