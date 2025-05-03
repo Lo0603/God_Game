@@ -6,8 +6,8 @@ public class ManuManager : MonoBehaviour
 {
 	[Header("Main Buttons")]
 	[SerializeField] private GameObject play;
-	[SerializeField] private GameObject option;
-	[SerializeField] private GameObject exit;
+	[SerializeField] private GameObject select;
+	[SerializeField] private GameObject quit;
 
 	[Header("SubMenus")]
 	[SerializeField] private GameObject playSubMenu;
@@ -35,7 +35,7 @@ public class ManuManager : MonoBehaviour
 			else if (exitConfirmMenu.activeSelf)
 			{
 				exitConfirmMenu.SetActive(false);
-				StartCoroutine(SelectAfterFrame(exit));
+				StartCoroutine(SelectAfterFrame(quit));
 			}
 		}
 	}
@@ -89,7 +89,7 @@ public class ManuManager : MonoBehaviour
 	public void OnExitNo()
 	{
 		exitConfirmMenu.SetActive(false);
-		StartCoroutine(SelectAfterFrame(exit));
+		StartCoroutine(SelectAfterFrame(quit));
 	}
 
 	// Stage1‚É‘JˆÚ‚·‚é
@@ -98,9 +98,9 @@ public class ManuManager : MonoBehaviour
 		SceneManager.LoadScene("Stage1");
 	}
 
-	// Select‚É‘JˆÚ‚·‚é
+	// StageSelect‚É‘JˆÚ‚·‚é
 	public void OnStageSelect()
 	{
-		SceneManager.LoadScene("Select");
+		SceneManager.LoadScene("StageSelect");
 	}
 }
