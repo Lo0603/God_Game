@@ -101,6 +101,6 @@ public class ManuManager : MonoBehaviour
 	// StageSelect‚É‘JˆÚ‚·‚é
 	public void OnStageSelect()
 	{
-		SceneManager.LoadScene("StageSelect");
+		SceneManager.LoadScene("Select");
 	}
 }

@@ -1,32 +1,44 @@
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.Events;
 
 public class StageButton : MonoBehaviour
 {
-	private TMP_Text labelText;
-	[SerializeField] private GameObject clearIcon; // クリア済みアイコンなどあれば
+	[Header("UI 参照")]
+	[SerializeField] private Button button;
+	[SerializeField] private TextMeshProUGUI stageText;
+	[SerializeField] private GameObject lockImage;
 
-	void Awake()
+	private int stageNumber;
+
+	/// <summary>
+	/// ステージボタンの初期化
+	/// </summary>
+	public void Initialize(int number, bool isUnlocked, UnityAction<int> onClickCallback)
 	{
-		// 子オブジェクトから TMP_Text を探して保持
-		labelText = GetComponentInChildren<TMP_Text>();
-		if (labelText == null)
-		{
-			Debug.LogWarning($"{gameObject.name} に TMP_Text が見つかりませんでした。");
-		}
-	}
+		stageNumber = number;
 
-	public void SetData(string label, bool isCleared)
-	{
-		if (labelText != null)
+		// テキストをステージ番号に設定
+		if (stageText != null)
 		{
-			labelText.text = label;
+			stageText.text = number.ToString();
 		}
 
-		if (clearIcon != null)
+		// ロック画像の表示・非表示
+		if (lockImage != null)
 		{
-			clearIcon.SetActive(isCleared);
+			lockImage.SetActive(!isUnlocked);
+		}
+
+		// ボタンの有効・無効切り替え
+		if (button != null)
+		{
+			button.interactable = isUnlocked;
+
+			// 既存リスナーをクリアしてから登録（多重登録防止）
+			button.onClick.RemoveAllListeners();
+			button.onClick.AddListener(() => onClickCallback?.Invoke(stageNumber));
 		}
 	}
 }
