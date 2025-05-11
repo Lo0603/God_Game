@@ -67,11 +67,11 @@ public class RectangleCreator : MonoBehaviour
     {
         isCreating = true;
 
-        //if (playerScript != null)
-        //{
-        //    playerScript.SetMoving(false); 
-        //    playerScript.SetGravity(false); 
-        //}
+        if (playerScript != null)
+        {
+            playerScript.SetMoving(false);
+            //playerScript.SetGravity(false);
+        }
 
         initialPosition = transform.position;  // 現在のオブジェクトの位置を使用する
         currentRectangle = Instantiate(rectanglePrefab, initialPosition, Quaternion.identity);

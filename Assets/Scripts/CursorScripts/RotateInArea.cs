@@ -47,7 +47,7 @@ public class RotateInArea : MonoBehaviour
         {
             UpdateAreaProperties();
 
-            if (HasBlockedTagInArea(new string[] { "Blocked" }))
+            if (HasBlockedTagInArea(new string[] { "Blocked" , "Goal"}))
             {
                 isFading = true;
                 SpriteColor spriteColor = rectanglePrefab.GetComponent<SpriteColor>();
@@ -72,7 +72,7 @@ public class RotateInArea : MonoBehaviour
 
             UpdateAreaProperties();
 
-            if (HasBlockedTagInArea(new string[] { "Blocked" }))
+            if (HasBlockedTagInArea(new string[] { "Blocked", "Goal" }))
             {
                 isFading = true;
                 SpriteColor spriteColor = rectanglePrefab.GetComponent<SpriteColor>();
@@ -119,46 +119,112 @@ public class RotateInArea : MonoBehaviour
         }
     }
 
-    // 指定された範囲内のオブジェクトを回転させる関数
+
     void RotateObjectsXAxis()
     {
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(areaCenter.position, new Vector2(areaSize.x, areaSize.y), 0);
+        bool playerFound = false;
+
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(areaCenter.position, areaSize, 0f);
         foreach (Collider2D collider in colliders)
         {
-            if (collider.CompareTag("Platform")) // 回転から除外するタグの確認
+            if (collider.CompareTag("Platform"))
                 continue;
 
-            //各オブジェクトを180度回転させる
+            // ✅ 완전히 안에 들어와야 회전
+            if (!IsFullyInside(collider, 0.2f))
+                continue;
+
             collider.transform.Rotate(180, 0, 0);
 
-            // 位置反転ロジック追加 (上下位置反転)
             Vector3 pos = collider.transform.position;
-            pos.y = 2 * areaCenter.position.y - pos.y; // 中心を基準にY位置を反転
+            pos.y = 2 * areaCenter.position.y - pos.y;
             collider.transform.position = pos;
-            FlipPlayerGravity();  // 重力反転
+
+            // 플레이어인지 체크
+            if (collider.CompareTag("Player"))
+            {
+                playerFound = true;
+            }
+        }
+
+        // ✅ 루프 끝나고 나서 한번만
+        if (playerFound)
+        {
+            FlipPlayerGravity();
         }
     }
-
 
     void RotateObjectsYAxis()
     {
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(areaCenter.position, new Vector2(areaSize.x, areaSize.y), 0);
+        bool playerFound = false;
+
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(areaCenter.position, areaSize, 0f);
         foreach (Collider2D collider in colliders)
         {
-            if (collider.CompareTag("Platform")) // 回転から除外するタグの確認
+            if (collider.CompareTag("Platform"))
                 continue;
 
+            // ✅ 완전히 안에 들어와야 회전
+            if (!IsFullyInside(collider, 0.2f))
+                continue;
 
-            // 各オブジェクトをY軸を基準に180度回転させる
             collider.transform.Rotate(0, 180, 0);
 
-            // 位置反転ロジック追加(左右位置反転)
             Vector3 pos = collider.transform.position;
-            pos.x = 2 * areaCenter.position.x - pos.x; // 中心を基準にX位置を反転
+            pos.x = 2 * areaCenter.position.x - pos.x;
             collider.transform.position = pos;
-            FlipPlayerDirection(); // 移動方向反転
+
+            if (collider.CompareTag("Player"))
+            {
+                playerFound = true;
+            }
+        }
+        if (playerFound)
+        {
+            FlipPlayerDirection();
         }
     }
+
+    //// 指定された範囲内のオブジェクトを回転させる関数
+    //void RotateObjectsXAxis()
+    //{
+    //    Collider2D[] colliders = Physics2D.OverlapBoxAll(areaCenter.position, new Vector2(areaSize.x, areaSize.y), 0);
+    //    foreach (Collider2D collider in colliders)
+    //    {
+    //        if (collider.CompareTag("Platform")) // 回転から除外するタグの確認
+    //            continue;
+
+    //        //各オブジェクトを180度回転させる
+    //        collider.transform.Rotate(180, 0, 0);
+
+    //        // 位置反転ロジック追加 (上下位置反転)
+    //        Vector3 pos = collider.transform.position;
+    //        pos.y = 2 * areaCenter.position.y - pos.y; // 中心を基準にY位置を反転
+    //        collider.transform.position = pos;
+    //        FlipPlayerGravity();  // 重力反転
+    //    }
+    //}
+
+
+    //void RotateObjectsYAxis()
+    //{
+    //    Collider2D[] colliders = Physics2D.OverlapBoxAll(areaCenter.position, new Vector2(areaSize.x, areaSize.y), 0);
+    //    foreach (Collider2D collider in colliders)
+    //    {
+    //        if (collider.CompareTag("Platform")) // 回転から除外するタグの確認
+    //            continue;
+
+
+    //        // 各オブジェクトをY軸を基準に180度回転させる
+    //        collider.transform.Rotate(0, 180, 0);
+
+    //        // 位置反転ロジック追加(左右位置反転)
+    //        Vector3 pos = collider.transform.position;
+    //        pos.x = 2 * areaCenter.position.x - pos.x; // 中心を基準にX位置を反転
+    //        collider.transform.position = pos;
+    //        FlipPlayerDirection(); // 移動方向反転
+    //    }
+    //}
 
     void EraseTiles()
     {
@@ -385,6 +451,25 @@ public class RotateInArea : MonoBehaviour
             }
         }
         return false;
+    }
+
+
+
+    bool IsFullyInside(Collider2D collider, float margin = 0.1f)
+    {
+        Bounds bounds = collider.bounds;
+
+        float left = bounds.min.x;
+        float right = bounds.max.x;
+        float bottom = bounds.min.y;
+        float top = bounds.max.y;
+
+        float areaLeft = areaCenter.position.x - areaSize.x / 2f - margin;
+        float areaRight = areaCenter.position.x + areaSize.x / 2f + margin;
+        float areaBottom = areaCenter.position.y - areaSize.y / 2f - margin;
+        float areaTop = areaCenter.position.y + areaSize.y / 2f + margin;
+
+        return left >= areaLeft && right <= areaRight && bottom >= areaBottom && top <= areaTop;
     }
 
 
