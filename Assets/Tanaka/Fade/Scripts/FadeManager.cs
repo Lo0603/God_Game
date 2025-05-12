@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
 
 public class FadeManager : MonoBehaviour
 {
@@ -20,12 +17,12 @@ public class FadeManager : MonoBehaviour
 		fade.FadeOut(fadeTime);
 	}
 
-	public void SceneTransition(int sceneNum)
+	public void SceneTransition(string sceneNum)
 	{
 		// フェードを掛けてからシーン遷移
 		fade.FadeIn(fadeTime, () =>
 		{
-			SceneManager.LoadScene("Fade" + sceneNum);
+			SceneManager.LoadScene(sceneNum);
 		});
 
 	}
