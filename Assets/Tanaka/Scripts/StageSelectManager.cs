@@ -3,19 +3,22 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class StageSelectManager : MonoBehaviour
 {
 	[Header("StageButton")]
-	[SerializeField] private GameObject stageButtonPrefab; // ステージボタンのプレハブ
+	[SerializeField] private GameObject stageButtonPrefab;
 
 	[Header("StagePage")]
-	[SerializeField] private Transform[] pageParents;      // 各ページの親Transform
+	[SerializeField] private Transform[] pageParents;
 
+	[Header("Unlock設定")]
+	[SerializeField] private int unlockedStage = 1;
 
-	private int totalStages = 10;         // ステージ数
+	private int totalStages = 10;
+	private GameObject firstStageButton;
 
-	private GameObject firstStageButton; // ステージ1のボタンを覚えておく
 
 	void Start()
 	{
@@ -39,15 +42,29 @@ public class StageSelectManager : MonoBehaviour
 				text.text = $"Stage {i}";
 			}
 
-			// 全ステージをアンロック
+			// ロックアイコンを探す
+			Transform lockTransform = btnObj.transform.Find("LockIcon");
+			GameObject lockIcon = lockTransform != null ? lockTransform.gameObject : null;
+
+			// ボタンとステージ番号の記録
 			Button button = btnObj.GetComponent<Button>();
+			int stageNum = i;
+
 			if (button != null)
 			{
-				button.interactable = true;
+				bool isUnlocked = (stageNum <= unlockedStage);
 
-				// ボタンクリックでステージ番号ログを出す
-				int stageNum = i;
-				button.onClick.AddListener(() => Debug.Log($"Stage {stageNum} selected!"));
+				button.interactable = isUnlocked;
+
+				if (lockIcon != null)
+					lockIcon.SetActive(!isUnlocked);
+
+				// アンロックされたボタンにだけリスナー追加
+				if (isUnlocked)
+				{
+					button.onClick.AddListener(() => Debug.Log($"Stage {stageNum} selected!"));
+					button.onClick.AddListener(() => SceneManager.LoadScene($"Stage{stageNum}"));
+				}
 			}
 
 			// ステージ1のボタンを保存
