@@ -12,6 +12,7 @@ public class PageSlider : MonoBehaviour
 	private int currentPage = 0;
 	private bool isSliding = false;
 
+
 	public void SlideToPage(int targetPage)
 	{
 		if (isSliding || targetPage == currentPage || targetPage < 0 || targetPage >= pages.Length)
