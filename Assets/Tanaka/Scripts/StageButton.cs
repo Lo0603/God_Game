@@ -8,7 +8,6 @@ public class StageButton : MonoBehaviour
 	[Header("UI 参照")]
 	[SerializeField] private Button button;
 	[SerializeField] private TextMeshProUGUI stageText;
-	[SerializeField] private GameObject lockImage;
 
 	private int stageNumber;
 
@@ -23,12 +22,6 @@ public class StageButton : MonoBehaviour
 		if (stageText != null)
 		{
 			stageText.text = number.ToString();
-		}
-
-		// ロック画像の表示・非表示
-		if (lockImage != null)
-		{
-			lockImage.SetActive(!isUnlocked);
 		}
 
 		// ボタンの有効・無効切り替え
