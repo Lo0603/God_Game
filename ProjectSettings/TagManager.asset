@@ -7,6 +7,8 @@ TagManager:
   - Platform
   - Blocked
   - Square
+  - Ground
+  - Goal
   layers:
   - Default
   - TransparentFX
@@ -17,8 +19,8 @@ TagManager:
   - Platform
   - Blocked
   - Square
-  - 
-  - 
+  - Ground
+  - Goal
   - 
   - 
   - 
