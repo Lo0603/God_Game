@@ -937,7 +937,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageButtonPrefab: {fileID: 4843685000522000835, guid: db6a9f062d376524e8b83f81e41b61b1, type: 3}
-  stagePlaceholderPrefab: {fileID: 814503487993069106, guid: 8c147f4b06f539e478b0504d85dc89c8, type: 3}
+  stagePlaceholderPrefab: {fileID: 6163088115535534208, guid: c91e36db19ca62e42908c236d9b4f8d4, type: 3}
   pageParents:
   - {fileID: 1981450174}
   - {fileID: 1574077349}
@@ -945,7 +945,7 @@ MonoBehaviour:
   rightArrowPrefab: {fileID: 1379721501}
   pageSlider: {fileID: 1250288757}
   useDebug: 1
-  maxUnlockedStage: 6
+  maxUnlockedStage: 10
 --- !u!1 &1574077348
 GameObject:
   m_ObjectHideFlags: 0

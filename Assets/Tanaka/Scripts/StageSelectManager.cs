@@ -22,7 +22,6 @@ public class StageSelectManager : MonoBehaviour
 	[SerializeField] private bool useDebug = true;
 	[SerializeField, Range(1, 10)] private int maxUnlockedStage = 1;
 
-
 	private const int totalStages = 10;
 	private const int stagesPerPage = 9;
 
@@ -35,13 +34,12 @@ public class StageSelectManager : MonoBehaviour
 		{
 			PlayerPrefs.DeleteAll();
 
-
 			for (int i = 1; i <= totalStages; i++)
 			{
 				bool isCleared = (i <= maxUnlockedStage);
 				PlayerPrefs.SetInt($"StageCleared_{i}", isCleared ? 1 : 0);
 			}
-			PlayerPrefs.Save(); // ※不要だけど明示的に
+			PlayerPrefs.Save(); // 念のため保存
 		}
 
 		InitializePagePositions();
@@ -55,7 +53,7 @@ public class StageSelectManager : MonoBehaviour
 
 	private void InitializePagePositions()
 	{
-		// PageSlider と合わせておく
+		// PageSlider と合わせてページ位置を設定
 		pageSlider.Pages[0].anchoredPosition = Vector2.zero;
 		float w = Screen.width;
 		for (int i = 1; i < pageSlider.Pages.Length; i++)
@@ -67,48 +65,62 @@ public class StageSelectManager : MonoBehaviour
 		for (int i = 1; i <= totalStages; i++)
 		{
 			int pageIndex = (i - 1) / stagesPerPage;
+			if (pageIndex >= pageParents.Length)
+			{
+				Debug.LogWarning($"pageParents[{pageIndex}] が存在しません。");
+				continue;
+			}
+
 			Transform parent = pageParents[pageIndex];
 
-			// 前ステージ未クリアなら非表示に skip（ステージ1は常に表示）
+			// ステージ1は常に表示、それ以降は開放されてるか
 			bool isCleared = (i <= maxUnlockedStage);
 			PlayerPrefs.SetInt($"StageCleared_{i - 1}", isCleared ? 1 : 0);
 
+			// まずボタンを生成（SetActiveでON/OFF）
 			GameObject btn = Instantiate(stageButtonPrefab, parent);
 			btn.name = $"Stage_{i}";
+			btn.SetActive(isCleared);
 
 			// テキスト表示
 			var tmp = btn.GetComponentInChildren<TextMeshProUGUI>();
 			if (tmp != null) tmp.text = i.ToString();
 
-			// ボタン
+			// ボタン有効化とイベント設定
 			var button = btn.GetComponent<Button>();
-			btn.SetActive(isCleared);
-
 			if (isCleared && button != null)
 			{
 				button.interactable = true;
 				int sn = i;
 				button.onClick.AddListener(() => Debug.Log($"Stage {sn} selected!"));
-				if (firstSelectable == null)
-					firstSelectable = btn;
+			}
+
+			// 最初の選択対象として記録
+			if (firstSelectable == null && isCleared)
+				firstSelectable = btn;
+
+			// プレースホルダー追加（未解放時のみ）
+			if (!isCleared && stagePlaceholderPrefab != null)
+			{
+				GameObject placeholder = Instantiate(stagePlaceholderPrefab, parent);
+				placeholder.name = $"Placeholder_{i}";
 			}
 		}
+
 		PlayerPrefs.Save();
-		Debug.Log("StageCleared_9 = " + PlayerPrefs.GetInt("StageCleared_9", 0));
 	}
+
 
 	private void UpdateNavigation()
 	{
-		bool page2Enabled = PlayerPrefs.GetInt("StageCleared_9", 0) == 1;
+		// ステージ9が解放されていたらページ2有効
+		bool page2Enabled = maxUnlockedStage >= 9;
 
-		// ページ2 全体を表示／非表示
 		if (pageParents.Length > 1)
 			pageParents[1].gameObject.SetActive(page2Enabled);
 
-		// 右矢印：ステージ9クリア済みで、現在ページが0のときのみ表示
+		// 矢印の表示切替
 		rightArrowPrefab.SetActive(page2Enabled && pageSlider.CurrentPage == 0);
-
-		// 左矢印：ステージ9クリア済みで、現在ページが1のときのみ表示
 		leftArrowPrefab.SetActive(page2Enabled && pageSlider.CurrentPage == 1);
 	}
 
@@ -126,14 +138,14 @@ public class StageSelectManager : MonoBehaviour
 
 	private IEnumerator WaitForSlideAndUpdate()
 	{
-		// スライド中は矢印を非表示
+		// スライド中は矢印非表示
 		leftArrowPrefab.SetActive(false);
 		rightArrowPrefab.SetActive(false);
 
-		// スライド完了まで待つ
+		// スライド終了待ち
 		yield return new WaitUntil(() => !pageSlider.IsSliding);
 
-		// スライド後に矢印の表示状態を更新
+		// スライド後のナビゲーション更新
 		UpdateNavigation();
 	}
 }
