@@ -147,7 +147,6 @@ GameObject:
   - component: {fileID: 4843685000522000847}
   - component: {fileID: 4843685000522000844}
   - component: {fileID: 4843685000522000845}
-  - component: {fileID: 4843685000522000834}
   - component: {fileID: 3819923875894465355}
   m_Layer: 5
   m_Name: StageButton
@@ -259,20 +258,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4843685000522000834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4843685000522000835}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef5937c5fcec5ad4b8ce8bebece6a394, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  button: {fileID: 4843685000522000845}
-  stageText: {fileID: 4843684999489725839}
 --- !u!114 &3819923875894465355
 MonoBehaviour:
   m_ObjectHideFlags: 0

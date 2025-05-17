@@ -45,6 +45,7 @@ public class StageSelectManager : MonoBehaviour
 		InitializePagePositions();
 		CreateStageButtons();
 		UpdateNavigation();
+		SetupNavigation();
 
 		// 最初の選択をセット
 		if (firstSelectable != null)
@@ -93,6 +94,14 @@ public class StageSelectManager : MonoBehaviour
 				button.interactable = true;
 				int sn = i;
 				button.onClick.AddListener(() => Debug.Log($"Stage {sn} selected!"));
+
+				button.onClick.AddListener(() =>
+				{
+					string stageName = $"Stage{sn}";
+					LoadingManager.LoadScene(stageName);
+				});
+
+
 			}
 
 			// 最初の選択対象として記録
@@ -113,8 +122,8 @@ public class StageSelectManager : MonoBehaviour
 
 	private void UpdateNavigation()
 	{
-		// ステージ9が解放されていたらページ2有効
-		bool page2Enabled = maxUnlockedStage >= 9;
+		// ステージ9がクリアされていたらページ2有効
+		bool page2Enabled = maxUnlockedStage > 9;
 
 		if (pageParents.Length > 1)
 			pageParents[1].gameObject.SetActive(page2Enabled);
@@ -147,5 +156,75 @@ public class StageSelectManager : MonoBehaviour
 
 		// スライド後のナビゲーション更新
 		UpdateNavigation();
+
+		// フォーカスを次の矢印に移す
+		if (pageSlider.CurrentPage == 0)
+		{
+			// ページ0なら右矢印を選択
+			EventSystem.current.SetSelectedGameObject(rightArrowPrefab);
+		}
+		else
+		{
+			// ページ1なら左矢印を選択
+			EventSystem.current.SetSelectedGameObject(leftArrowPrefab);
+		}
+	}
+
+	private void SetupNavigation()
+	{
+		// 各ページ内のボタン取得
+		foreach (Transform page in pageParents)
+		{
+			var buttons = page.GetComponentsInChildren<Button>(includeInactive: false);
+
+			for (int i = 0; i < buttons.Length; i++)
+			{
+				Navigation nav = new Navigation
+				{
+					mode = Navigation.Mode.Explicit
+				};
+
+				int col = i % 3;
+				int row = i / 3;
+
+				// 上下左右のボタンを探す
+				if (row > 0) nav.selectOnUp = buttons[i - 3];
+				if (row < 2 && i + 3 < buttons.Length) nav.selectOnDown = buttons[i + 3];
+				if (col > 0) nav.selectOnLeft = buttons[i - 1];
+				if (col < 2 && i + 1 < buttons.Length) nav.selectOnRight = buttons[i + 1];
+
+				buttons[i].navigation = nav;
+			}
+		}
+
+		// ページ矢印との連携（Page1: ステージ6→右矢印、Page2: ステージ10→左矢印）
+		if (pageParents.Length > 1)
+		{
+			// Page1: ステージ6 → 右矢印
+			Button stage6 = GameObject.Find("Stage_6")?.GetComponent<Button>();
+			if (stage6 != null && rightArrowPrefab != null)
+			{
+				var nav = stage6.navigation;
+				nav.selectOnRight = rightArrowPrefab.GetComponent<Button>();
+				stage6.navigation = nav;
+
+				var arrowNav = rightArrowPrefab.GetComponent<Button>().navigation;
+				arrowNav.selectOnLeft = stage6;
+				rightArrowPrefab.GetComponent<Button>().navigation = arrowNav;
+			}
+
+			// Page2: ステージ10 → 左矢印
+			Button stage10 = GameObject.Find("Stage_10")?.GetComponent<Button>();
+			if (stage10 != null && leftArrowPrefab != null)
+			{
+				var nav = stage10.navigation;
+				nav.selectOnLeft = leftArrowPrefab.GetComponent<Button>();
+				stage10.navigation = nav;
+
+				var arrowNav = leftArrowPrefab.GetComponent<Button>().navigation;
+				arrowNav.selectOnRight = stage10;
+				leftArrowPrefab.GetComponent<Button>().navigation = arrowNav;
+			}
+		}
 	}
 }

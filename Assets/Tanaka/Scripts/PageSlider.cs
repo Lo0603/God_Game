@@ -13,15 +13,10 @@ public class PageSlider : MonoBehaviour
 	public bool isSliding = false;
 	public bool IsSliding => isSliding;
 
-	/// <summary>
-	/// 現在のページ番号（外部参照用）
-	/// </summary>
 	public int CurrentPage => currentPage;
 	public RectTransform[] Pages => pages;
 
-	/// <summary>
-	/// targetPage へスライドする
-	/// </summary>
+
 	public void SlideToPage(int targetPage)
 	{
 		if (isSliding || targetPage == currentPage || targetPage < 0 || targetPage >= pages.Length)
