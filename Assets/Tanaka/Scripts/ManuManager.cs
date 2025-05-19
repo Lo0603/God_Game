@@ -19,7 +19,7 @@ public class ManuManager : MonoBehaviour
 
 	private void Start()
 	{
-		playSubMenu.SetActive(false);
+        playSubMenu.SetActive(false);
 		exitConfirmMenu.SetActive(false);
 	}
 
