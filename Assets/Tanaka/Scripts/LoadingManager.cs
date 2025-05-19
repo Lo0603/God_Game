@@ -7,12 +7,12 @@ public class LoadingManager : MonoBehaviour
 {
 	public static LoadingManager Instance { get; private set; }
 
-	[Header("UI References")]
+	[Header("UI リファレンス")]
 	[SerializeField] private GameObject loadingUI;
 	[SerializeField] private TextMeshProUGUI loadingText;
 	[SerializeField] private TextMeshProUGUI hintText;
 
-	[Header("Hints & Timing")]
+	[Header("ヒント ＆ タイミング")]
 	[SerializeField] private string[] hintMessages;
 	[SerializeField] private float minDisplayTime = 3f;
 	[SerializeField] private float dotInterval = 0.5f;
@@ -53,13 +53,10 @@ public class LoadingManager : MonoBehaviour
 
 	private IEnumerator LoadSceneAsync(string sceneName)
 	{
-		// ① ローディングシーンへ遷移
 		SceneManager.LoadScene("LoadingScene");
-
-		// ② ローディングシーンのロード完了を待つ（1フレーム待機）
 		yield return null;
 
-		// ③ ローディングシーン内の UI を動的に取得
+		// ローディングシーン内の UI を動的に取得
 		loadingUI = GameObject.Find("LoadingUI");
 		loadingText = GameObject.Find("LoadingText")?.GetComponent<TextMeshProUGUI>();
 		hintText = GameObject.Find("HintText")?.GetComponent<TextMeshProUGUI>();
