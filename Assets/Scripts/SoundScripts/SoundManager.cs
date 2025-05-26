@@ -66,4 +66,32 @@ public class SoundManager : MonoBehaviour
         Debug.LogWarning("ƒTƒEƒ“ƒh‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ: " + name);
         return null;
     }
+
+    //public class TitleManager : MonoBehaviour
+    //{
+    //    void Start()
+    //    {
+    //        if (SoundManager.Instance != null)
+    //        {
+    //            SoundManager.Instance.PlayBGM("‚ä‚é‚â‚©‚P");
+    //        }
+    //        else
+    //        {
+    //            Debug.LogWarning("SoundManager ‚ª‘¶İ‚µ‚Ü‚¹‚ñI");
+    //        }
+    //    }
+    //}
+    //void Start()
+    //{
+    //    if (SoundManager.Instance != null)
+    //    {
+    //        if (!SoundManager.Instance.bgmSource.isPlaying ||
+    //            SoundManager.Instance.bgmSource.clip.name != "‚ä‚é‚â‚©‚P")
+    //        {
+    //            SoundManager.Instance.PlayBGM("‚ä‚é‚â‚©‚P");
+    //        }
+    //    }
+    //}
+
 }
+
