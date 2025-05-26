@@ -45,23 +45,23 @@ public class OptionManager : MonoBehaviour
 		if (!isOptionOpen) return;
 
 		// è„â∫ëIë
-		if (Input.GetKeyDown(KeyCode.UpArrow))
+		if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
 		{
 			selectedIndex = Mathf.Max(0, selectedIndex - 1);
 			UpdateUI();
 		}
-		else if (Input.GetKeyDown(KeyCode.DownArrow))
+		else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
 		{
 			selectedIndex = Mathf.Min(itemLabels.Length - 1, selectedIndex + 1);
 			UpdateUI();
 		}
 
 		// ç∂âEÇ≈âπó ïœçX
-		if (Input.GetKeyDown(KeyCode.LeftArrow))
+		if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
 		{
 			AdjustValue(-1);
 		}
-		else if (Input.GetKeyDown(KeyCode.RightArrow))
+		else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
 		{
 			AdjustValue(1);
 		}
@@ -116,6 +116,6 @@ public class OptionManager : MonoBehaviour
 	{
 		Time.timeScale = 1f;
 		PlayerPrefs.Save();
-		LoadingManager.LoadScene("Title");
+		SceneManager.LoadScene("Title");
 	}
 }

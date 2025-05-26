@@ -48,6 +48,8 @@ MonoBehaviour:
   loadingText: {fileID: 0}
   hintText: {fileID: 0}
   hintMessages:
-  - "\u3044\u3084\u3042\u3042"
+  - First
+  - Second
+  - Third
   minDisplayTime: 3
   dotInterval: 0.5

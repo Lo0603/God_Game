@@ -953,7 +953,7 @@ MonoBehaviour:
   rightArrowPrefab: {fileID: 1379721501}
   pageSlider: {fileID: 1250288757}
   useDebug: 1
-  maxUnlockedStage: 1
+  maxUnlockedStage: 2
 --- !u!1 &1574077348
 GameObject:
   m_ObjectHideFlags: 0
