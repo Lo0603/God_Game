@@ -9,6 +9,9 @@ TagManager:
   - Square
   - Ground
   - Goal
+  - Cuttable
+  - Button
+  - GravityBlock
   layers:
   - Default
   - TransparentFX
@@ -21,8 +24,8 @@ TagManager:
   - Square
   - Ground
   - Goal
-  - 
-  - 
+  - Button
+  - GravityBlock
   - 
   - 
   - 

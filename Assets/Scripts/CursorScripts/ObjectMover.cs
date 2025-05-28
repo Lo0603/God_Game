@@ -28,7 +28,7 @@ public class ObjectMover : MonoBehaviour
     {
         //MoveObject();
         HandleBackspace();
-        Debug.Log("Moving " + gridMove + " units.");
+        //Debug.Log("Moving " + gridMove + " units.");
     }
 
     void MoveObject()
@@ -49,6 +49,8 @@ public class ObjectMover : MonoBehaviour
         {
             if (rotateInArea.IsFading()) { return; }
             RestoreObjectsInRectangle();
+
+            GravityBlockApplyGravity();
 
             // 四角形の最後の位置を保存し、各座標を四捨五入してタイルマップに合わせる
             // tile単位でsnap(例：5単位)
@@ -81,7 +83,7 @@ public class ObjectMover : MonoBehaviour
                 PlayerMoving moveScript = obj.GetComponent<PlayerMoving>();
                 if (moveScript != null)
                 {
-                    moveScript.SetMoving(true); 
+                    moveScript.SetMoving(false); 
                     moveScript.SetGravity(true); 
                 }
             }
@@ -89,5 +91,41 @@ public class ObjectMover : MonoBehaviour
             // 必要ならここに追加
             // if (obj.CompareTag("Enemy")) { ... }
         }
+    }
+
+
+    void GravityBlockApplyGravity()
+    {
+        Vector2 center = rectangleCreator.GetRectangleCenter();
+        Vector2 size = rectangleCreator.GetRectangleSize();
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(center, size, 0f);
+
+        foreach (Collider2D col in colliders)
+        {
+            if (col.CompareTag("GravityBlock"))
+            {
+                if (IsFullyInside(col, 0.2f))
+                {
+                    col.GetComponent<GravityBlock>()?.ApplyFakeGravity();
+                }
+            }
+        }
+    }
+
+    bool IsFullyInside(Collider2D collider, float margin = 0.1f)
+    {
+        Bounds bounds = collider.bounds;
+
+        float left = bounds.min.x;
+        float right = bounds.max.x;
+        float bottom = bounds.min.y;
+        float top = bounds.max.y;
+
+        float areaLeft = rectangleCreator.GetRectangleCenter().x - rectangleCreator.GetRectangleSize().x / 2f - margin;
+        float areaRight = rectangleCreator.GetRectangleCenter().x + rectangleCreator.GetRectangleSize().x / 2f + margin;
+        float areaBottom = rectangleCreator.GetRectangleCenter().y - rectangleCreator.GetRectangleSize().y / 2f - margin;
+        float areaTop = rectangleCreator.GetRectangleCenter().y + rectangleCreator.GetRectangleSize().y / 2f + margin;
+
+        return left >= areaLeft && right <= areaRight && bottom >= areaBottom && top <= areaTop;
     }
 }

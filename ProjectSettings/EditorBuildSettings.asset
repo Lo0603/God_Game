@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Tanaka/Scenes/Stage1.unity
     guid: 1f8d4da52bea5834394a760484121a48
+  - enabled: 1
+    path: Assets/Tanaka/Scenes/LoadingScene.unity
+    guid: 14e8d119a3880504cad395ed2e04e701
   m_configObjects: {}

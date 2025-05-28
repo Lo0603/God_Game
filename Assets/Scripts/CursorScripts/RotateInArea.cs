@@ -91,6 +91,8 @@ public class RotateInArea : MonoBehaviour
                 particleSpawner.PlayParticlesAround(rectanglePrefab.transform.position, rectanglePrefab.transform.localScale);
             StartFadeAndRotate(isXAxis: true);   // X軸回転
         }
+
+
     }
 
     // 四角形の位置と大きさを更新する関数
@@ -130,9 +132,15 @@ public class RotateInArea : MonoBehaviour
             if (collider.CompareTag("Platform"))
                 continue;
 
-            // ✅ 완전히 안에 들어와야 회전
+            //  완전히 안에 들어와야 회전
             if (!IsFullyInside(collider, 0.2f))
                 continue;
+
+            if (collider.CompareTag("GravityBlock"))
+            {
+                collider.GetComponent<GravityBlock>()?.ApplyXFlipGravity();
+            }
+
 
             collider.transform.Rotate(180, 0, 0);
 
@@ -147,7 +155,7 @@ public class RotateInArea : MonoBehaviour
             }
         }
 
-        // ✅ 루프 끝나고 나서 한번만
+        // 루프 끝나고 나서 한번만
         if (playerFound)
         {
             FlipPlayerGravity();
@@ -164,9 +172,15 @@ public class RotateInArea : MonoBehaviour
             if (collider.CompareTag("Platform"))
                 continue;
 
-            // ✅ 완전히 안에 들어와야 회전
+            //  完全に中に入ってこそ回転
             if (!IsFullyInside(collider, 0.2f))
                 continue;
+
+            if (collider.CompareTag("GravityBlock"))
+            {
+                collider.GetComponent<GravityBlock>()?.ApplyYFlipGravity();
+            }
+
 
             collider.transform.Rotate(0, 180, 0);
 

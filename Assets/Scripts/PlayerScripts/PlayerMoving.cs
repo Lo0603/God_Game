@@ -103,7 +103,7 @@ public class PlayerMoving : MonoBehaviour
         Vector2 rayDirection = Quaternion.Euler(0, 0, transform.eulerAngles.z) * baseDirection;
 
         float rayDistance = 2.6f;
-        int groundLayer = LayerMask.GetMask("Platform", "Blocked","Ground");
+        int groundLayer = LayerMask.GetMask("Platform", "Blocked","Ground", "GravityBlock");
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, rayDistance, groundLayer);
 
@@ -190,7 +190,8 @@ public class PlayerMoving : MonoBehaviour
 
         Debug.DrawLine(transform.position, transform.position + (Vector3)(direction * checkDistance), Color.green);
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, checkDistance, LayerMask.GetMask("Platform", "Blocked"));
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, checkDistance, 
+            LayerMask.GetMask("Platform", "Blocked","Ground","GravityBlock"));
         return hit.collider != null;
     }
 

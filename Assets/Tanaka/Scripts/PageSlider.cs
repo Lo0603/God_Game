@@ -1,16 +1,21 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class PageSlider : MonoBehaviour
 {
-	[SerializeField] private GameObject[] pageArrowButtons;
+	[Header("ページ登録")]
+	[SerializeField] private RectTransform[] pages;
 
-	public RectTransform[] pages; // ページ群
-	public float slideDuration = 0.5f;
+	[Header("スライド時間")]
+	[SerializeField] private float slideDuration = 0.5f;
+
 	private int currentPage = 0;
-	private bool isSliding = false;
+	public bool isSliding = false;
+	public bool IsSliding => isSliding;
+
+	public int CurrentPage => currentPage;
+	public RectTransform[] Pages => pages;
+
 
 	public void SlideToPage(int targetPage)
 	{
@@ -21,43 +26,29 @@ public class PageSlider : MonoBehaviour
 		currentPage = targetPage;
 	}
 
-	IEnumerator SlideCoroutine(int fromPage, int toPage)
+	private IEnumerator SlideCoroutine(int from, int to)
 	{
 		isSliding = true;
 
-		Vector2 fromStart = pages[fromPage].anchoredPosition;
 		float width = Screen.width;
+		Vector2 startFrom = pages[from].anchoredPosition;
+		Vector2 endFrom = new Vector2((from < to ? -width : width), startFrom.y);
+		Vector2 startTo = new Vector2((from < to ? width : -width), startFrom.y);
 
-		// スライド方向を決定（左へ or 右へ）
-		int direction = (toPage > fromPage) ? 1 : -1;
+		pages[to].anchoredPosition = startTo;
 
-		// from → to に向けての座標を設定
-		Vector2 fromEnd = new Vector2(-direction * width, fromStart.y);
-		Vector2 toStart = new Vector2(direction * width, fromStart.y);
-
-		pages[toPage].anchoredPosition = toStart;
-
-		float time = 0f;
-		while (time < slideDuration)
+		float elapsed = 0f;
+		while (elapsed < slideDuration)
 		{
-			float t = time / slideDuration;
-			pages[fromPage].anchoredPosition = Vector2.Lerp(fromStart, fromEnd, t);
-			pages[toPage].anchoredPosition = Vector2.Lerp(toStart, Vector2.zero, t);
-			time += Time.deltaTime;
+			float t = elapsed / slideDuration;
+			pages[from].anchoredPosition = Vector2.Lerp(startFrom, endFrom, t);
+			pages[to].anchoredPosition = Vector2.Lerp(startTo, Vector2.zero, t);
+			elapsed += Time.deltaTime;
 			yield return null;
 		}
 
-		// 最終位置を明示的に設定
-		pages[fromPage].anchoredPosition = fromEnd;
-		pages[toPage].anchoredPosition = Vector2.zero;
-
-
-		// ページ遷移が終わったあとに次ページ内の矢印にカーソル移動
-		if (pageArrowButtons.Length > toPage && pageArrowButtons[toPage] != null)
-		{
-			EventSystem.current.SetSelectedGameObject(pageArrowButtons[toPage]);
-		}
-
+		pages[from].anchoredPosition = endFrom;
+		pages[to].anchoredPosition = Vector2.zero;
 
 		isSliding = false;
 	}

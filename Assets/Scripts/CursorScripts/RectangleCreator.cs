@@ -146,7 +146,44 @@ public class RectangleCreator : MonoBehaviour
     }
 
 
+    public List<GameObject> GetStrictContainedObjects(float margin = 0.05f)
+    {
+        List<GameObject> strictlyContained = new List<GameObject>();
+
+        if (currentRectangle == null) return strictlyContained;
+
+        Vector2 center = currentRectangle.transform.position;
+        Vector2 size = currentRectangle.transform.localScale;
+
+        // marginを抜いて探索領域を縮小
+        Vector2 shrunkSize = new Vector2(
+            Mathf.Max(0, size.x - margin * 2),
+            Mathf.Max(0, size.y - margin * 2)
+        );
+
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(center, shrunkSize, 0f);
+
+        foreach (Collider2D col in colliders)
+        {
+            strictlyContained.Add(col.gameObject);
+        }
+
+        return strictlyContained;
+    }
+
+
+
     public bool IsCreating() { return isCreating; } 
 
     public List<GameObject> GetContainedObjects() { return containedObjects; }
+
+    public Vector2 GetRectangleCenter()
+    {
+        return currentRectangle != null ? currentRectangle.transform.position : Vector2.zero;
+    }
+
+    public Vector2 GetRectangleSize()
+    {
+        return currentRectangle != null ? currentRectangle.transform.localScale : Vector2.zero;
+    }
 }
