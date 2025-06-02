@@ -15,7 +15,7 @@ public class GravityBlock : MonoBehaviour
         if (rb != null)
         {
             fakeGravity = 3f;
-            rb.gravityScale = 0f; // 最初は重力なし
+            rb.gravityScale = 3f; // 最初は重力なし
         }
     }
 
