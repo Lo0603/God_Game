@@ -9,7 +9,7 @@ public class RotateInArea : MonoBehaviour
     public Vector2 areaSize;  // 四角形のサイズを動的に更新する予定
     public GameObject rectanglePrefab;  // 四角形 プリファブ 参照
     public float rotationAngle = 90f;  // 回転角度
-    public Tilemap tilemap;
+    public List<Tilemap> tilemaps = new List<Tilemap>();
 
     private ParticleSpawner particleSpawner;
     private RectangleCreator rectangleCreator;
@@ -17,10 +17,11 @@ public class RotateInArea : MonoBehaviour
     private bool isFading = false;   // 演出中か確認
     void Start()
     {
-        if (tilemap == null)
+    
+
+        if (tilemaps.Count == 0)
         {
-            // スタート時のタイルマップを探す
-            tilemap = GameObject.FindObjectOfType<Tilemap>();
+            tilemaps.AddRange(GameObject.FindObjectsOfType<Tilemap>());
             //tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();    　　　　　　　// 名前で探す方法
             //tilemap = GameObject.FindGameObjectWithTag("Tilemap").GetComponent<Tilemap>(); // tagで探す方法
         }
@@ -242,21 +243,24 @@ public class RotateInArea : MonoBehaviour
 
     void EraseTiles()
     {
-        // 四角形範囲の左下隅計算（areaSizeは中心基準であるため）
-        Vector3 bottomLeft = areaCenter.position - (Vector3)(areaSize / 2);
-
-        // セル座標範囲計算
-        Vector3Int minCell = tilemap.WorldToCell(bottomLeft);
-        Vector3Int maxCell = tilemap.WorldToCell(areaCenter.position + (Vector3)(areaSize / 2));
-
-        for (int x = minCell.x; x <= maxCell.x; x++)
+        foreach (var map in tilemaps)
         {
-            for (int y = minCell.y; y <= maxCell.y; y++)
+            // 四角形範囲の左下隅計算（areaSizeは中心基準であるため）
+            Vector3 bottomLeft = areaCenter.position - (Vector3)(areaSize / 2);
+
+            // セル座標範囲計算
+            Vector3Int minCell = map.WorldToCell(bottomLeft);
+            Vector3Int maxCell = map.WorldToCell(areaCenter.position + (Vector3)(areaSize / 2));
+
+            for (int x = minCell.x; x <= maxCell.x; x++)
             {
-                Vector3Int tilePos = new Vector3Int(x, y, 0);
-                if (tilemap.HasTile(tilePos))
+                for (int y = minCell.y; y <= maxCell.y; y++)
                 {
-                    tilemap.SetTile(tilePos, null); // タイル除去
+                    Vector3Int tilePos = new Vector3Int(x, y, 0);
+                    if (map.HasTile(tilePos))
+                    {
+                        map.SetTile(tilePos, null); // タイル除去
+                    }
                 }
             }
         }
@@ -264,97 +268,102 @@ public class RotateInArea : MonoBehaviour
 
     void RotateTilesYAxis()
     {
-        Vector3 bottomLeft = areaCenter.position - (Vector3)(areaSize / 2);
-        Vector3Int minCell = tilemap.WorldToCell(bottomLeft);
-        Vector3Int maxCell = tilemap.WorldToCell(areaCenter.position + (Vector3)(areaSize / 2));
-
-        List<(Vector3Int oldPos, Vector3Int newPos, TileBase tile, Matrix4x4 matrix)> tilesToMove = new();
-
-        // 1. 保存:移動するタイル位置計算
-        for (int x = minCell.x; x <= maxCell.x; x++)
+        foreach (var map in tilemaps)
         {
-            for (int y = minCell.y; y <= maxCell.y; y++)
+            Vector3 bottomLeft = areaCenter.position - (Vector3)(areaSize / 2);
+            Vector3Int minCell = map.WorldToCell(bottomLeft);
+            Vector3Int maxCell = map.WorldToCell(areaCenter.position + (Vector3)(areaSize / 2));
+
+            List<(Vector3Int oldPos, Vector3Int newPos, TileBase tile, Matrix4x4 matrix)> tilesToMove = new();
+
+            // 1. 保存:移動するタイル位置計算
+            for (int x = minCell.x; x <= maxCell.x; x++)
             {
-                Vector3Int oldPos = new Vector3Int(x, y, 0);
-                if (tilemap.HasTile(oldPos))
+                for (int y = minCell.y; y <= maxCell.y; y++)
                 {
-                    TileBase tile = tilemap.GetTile(oldPos);
-                    Matrix4x4 matrix = tilemap.GetTransformMatrix(oldPos);
+                    Vector3Int oldPos = new Vector3Int(x, y, 0);
+                    if (map.HasTile(oldPos))
+                    {
+                        TileBase tile = map.GetTile(oldPos);
+                        Matrix4x4 matrix = map.GetTransformMatrix(oldPos);
 
-                    Vector3 worldPos = tilemap.CellToWorld(oldPos) + tilemap.cellSize / 2f;
-                    float mirroredX = 2 * areaCenter.position.x - worldPos.x;
-                    Vector3 mirroredWorld = new Vector3(mirroredX, worldPos.y, worldPos.z);
-                    Vector3Int newPos = tilemap.WorldToCell(mirroredWorld);
+                        Vector3 worldPos = map.CellToWorld(oldPos) + map.cellSize / 2f;
+                        float mirroredX = 2 * areaCenter.position.x - worldPos.x;
+                        Vector3 mirroredWorld = new Vector3(mirroredX, worldPos.y, worldPos.z);
+                        Vector3Int newPos = map.WorldToCell(mirroredWorld);
 
-                    tilesToMove.Add((oldPos, newPos, tile, matrix));
+                        tilesToMove.Add((oldPos, newPos, tile, matrix));
+                    }
                 }
             }
-        }
 
-        // 2. 削除: 既存 タイル 全て 除去 (衝突 防止)
-        foreach (var (oldPos, _, _, _) in tilesToMove)
-        {
-            tilemap.SetTile(oldPos, null);
-            tilemap.SetTransformMatrix(oldPos, Matrix4x4.identity); // 初期化
-        }
+            // 2. 削除: 既存 タイル 全て 除去 (衝突 防止)
+            foreach (var (oldPos, _, _, _) in tilesToMove)
+            {
+                map.SetTile(oldPos, null);
+                map.SetTransformMatrix(oldPos, Matrix4x4.identity);
+            }
 
-        // 3. コピー:新しい位置に回転した後、再配置
-        foreach (var (_, newPos, tile, matrix) in tilesToMove)
-        {
-            Quaternion newRotation = matrix.rotation * Quaternion.Euler(0, 180, 0);
-            Matrix4x4 newMatrix = Matrix4x4.TRS(Vector3.zero, newRotation, Vector3.one);
+            // 3. コピー:新しい位置に回転した後、再配置
+            foreach (var (_, newPos, tile, matrix) in tilesToMove)
+            {
+                Quaternion newRotation = matrix.rotation * Quaternion.Euler(0, 180, 0);
+                Matrix4x4 newMatrix = Matrix4x4.TRS(Vector3.zero, newRotation, Vector3.one);
 
-            tilemap.SetTile(newPos, tile);
-            tilemap.SetTransformMatrix(newPos, newMatrix);
+                map.SetTile(newPos, tile);
+                map.SetTransformMatrix(newPos, newMatrix);
+            }
         }
     }
 
 
     void RotateTilesXAxis()
     {
-        Vector3 bottomLeft = areaCenter.position - (Vector3)(areaSize / 2);
-        Vector3Int minCell = tilemap.WorldToCell(bottomLeft);
-        Vector3Int maxCell = tilemap.WorldToCell(areaCenter.position + (Vector3)(areaSize / 2));
-
-        List<(Vector3Int oldPos, Vector3Int newPos, TileBase tile, Matrix4x4 matrix)> tilesToMove = new();
-
-        //  1. 保存:移動するタイル位置計算
-        for (int x = minCell.x; x <= maxCell.x; x++)
+        foreach (var map in tilemaps)
         {
-            for (int y = minCell.y; y <= maxCell.y; y++)
+            Vector3 bottomLeft = areaCenter.position - (Vector3)(areaSize / 2);
+            Vector3Int minCell = map.WorldToCell(bottomLeft);
+            Vector3Int maxCell = map.WorldToCell(areaCenter.position + (Vector3)(areaSize / 2));
+
+            List<(Vector3Int oldPos, Vector3Int newPos, TileBase tile, Matrix4x4 matrix)> tilesToMove = new();
+
+            // 1. 保存:移動するタイル位置計算
+            for (int x = minCell.x; x <= maxCell.x; x++)
             {
-                Vector3Int oldPos = new Vector3Int(x, y, 0);
-                if (tilemap.HasTile(oldPos))
+                for (int y = minCell.y; y <= maxCell.y; y++)
                 {
-                    TileBase tile = tilemap.GetTile(oldPos);
-                    Matrix4x4 matrix = tilemap.GetTransformMatrix(oldPos);
+                    Vector3Int oldPos = new Vector3Int(x, y, 0);
+                    if (map.HasTile(oldPos))
+                    {
+                        TileBase tile = map.GetTile(oldPos);
+                        Matrix4x4 matrix = map.GetTransformMatrix(oldPos);
 
-                    // セルの中心位置で上下反転
-                    Vector3 worldPos = tilemap.CellToWorld(oldPos) + tilemap.cellSize / 2f;
-                    float mirroredY = 2 * areaCenter.position.y - worldPos.y;
-                    Vector3 mirroredWorld = new Vector3(worldPos.x, mirroredY, worldPos.z);
-                    Vector3Int newPos = tilemap.WorldToCell(mirroredWorld);
+                        Vector3 worldPos = map.CellToWorld(oldPos) + map.cellSize / 2f;
+                        float mirroredY = 2 * areaCenter.position.y - worldPos.y;
+                        Vector3 mirroredWorld = new Vector3(worldPos.x, mirroredY, worldPos.z);
+                        Vector3Int newPos = map.WorldToCell(mirroredWorld);
 
-                    tilesToMove.Add((oldPos, newPos, tile, matrix));
+                        tilesToMove.Add((oldPos, newPos, tile, matrix));
+                    }
                 }
             }
-        }
 
-        // 2. 削除: 既存 タイル 全て 除去 (衝突 防止)
-        foreach (var (oldPos, _, _, _) in tilesToMove)
-        {
-            tilemap.SetTile(oldPos, null);
-            tilemap.SetTransformMatrix(oldPos, Matrix4x4.identity);
-        }
+            // 2. 削除: 既存 タイル 全て 除去 (衝突 防止)
+            foreach (var (oldPos, _, _, _) in tilesToMove)
+            {
+                map.SetTile(oldPos, null);
+                map.SetTransformMatrix(oldPos, Matrix4x4.identity);
+            }
 
-        // 3. コピー:新しい位置に回転した後、再配置
-        foreach (var (_, newPos, tile, matrix) in tilesToMove)
-        {
-            Quaternion newRotation = matrix.rotation * Quaternion.Euler(180, 0, 0); // X軸回転
-            Matrix4x4 newMatrix = Matrix4x4.TRS(Vector3.zero, newRotation, Vector3.one);
+            // 3. コピー:新しい位置に回転した後、再配置
+            foreach (var (_, newPos, tile, matrix) in tilesToMove)
+            {
+                Quaternion newRotation = matrix.rotation * Quaternion.Euler(180, 0, 0);
+                Matrix4x4 newMatrix = Matrix4x4.TRS(Vector3.zero, newRotation, Vector3.one);
 
-            tilemap.SetTile(newPos, tile);
-            tilemap.SetTransformMatrix(newPos, newMatrix);
+                map.SetTile(newPos, tile);
+                map.SetTransformMatrix(newPos, newMatrix);
+            }
         }
     }
 
@@ -438,15 +447,15 @@ public class RotateInArea : MonoBehaviour
     }
 
     // tilemapCollider更新
-    void ForceRefreshTilemapCollider()
-    {
-        TilemapCollider2D collider = tilemap.GetComponent<TilemapCollider2D>();
-        if (collider != null)
-        {
-            collider.enabled = false;
-            collider.enabled = true;
-        }
-    }
+    //void ForceRefreshTilemapCollider()
+    //{
+    //    TilemapCollider2D collider = tilemap.GetComponent<TilemapCollider2D>();
+    //    if (collider != null)
+    //    {
+    //        collider.enabled = false;
+    //        collider.enabled = true;
+    //    }
+    //}
 
 
     // 四角の中に禁止TAGオブジェクトがあるか確認
