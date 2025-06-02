@@ -10,7 +10,7 @@ public class PlayerMoving : MonoBehaviour
     public float tileSize = 5f; // 추가: 타일 크기
 
     [Header("Internal States")]
-    private bool isMoving = true;
+    private bool isMoving = false;
     private int moveDirection = 1; // 1 = 右 , -1 = 左
     private bool stoppingSoon = false; // 추가: 이동 중 멈출 준비
     private float targetX; // 추가: 목표 위치
