@@ -22,7 +22,7 @@ public class FadeManager : MonoBehaviour
 		// フェードを掛けてからシーン遷移
 		fade.FadeIn(fadeTime, () =>
 		{
-			SceneManager.LoadScene(sceneNum);
+			SceneManager.LoadSceneAsync(sceneNum);
 		});
 
 	}

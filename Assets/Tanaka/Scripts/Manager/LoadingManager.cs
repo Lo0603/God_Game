@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class LoadingManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class LoadingManager : MonoBehaviour
 	[SerializeField] private GameObject loadingUI;
 	[SerializeField] private TextMeshProUGUI loadingText;
 	[SerializeField] private TextMeshProUGUI hintText;
+	[SerializeField] private Image loadingBack;
 
 	[Header("ヒント ＆ タイミング")]
 	[SerializeField] private string[] hintMessages;
@@ -60,9 +62,7 @@ public class LoadingManager : MonoBehaviour
 		loadingUI = GameObject.Find("LoadingUI");
 		loadingText = GameObject.Find("LoadingText")?.GetComponent<TextMeshProUGUI>();
 		hintText = GameObject.Find("HintText")?.GetComponent<TextMeshProUGUI>();
-
-		if (loadingUI != null)
-			loadingUI.SetActive(true);
+		loadingBack = GameObject.Find("LoadingBack")?.GetComponent<Image>();
 
 		if (loadingUI != null)
 			loadingUI.SetActive(true);
