@@ -36,7 +36,7 @@ public class MenuBuilder : MonoBehaviour
 			if (btn != null)
 				btn.onClick.AddListener(() => item.onClick?.Invoke());
 
-			Debug.Log($"Menu item '{item.label}' added to the menu.");
+			//Debug.Log($"Menu item '{item.label}' added to the menu.");
 		}
 
 		// Å‰‚Ìƒ{ƒ^ƒ“‚ğ‘I‘ğó‘Ô‚É
