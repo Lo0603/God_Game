@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -873228080477443964}
   - component: {fileID: -2311680242098420644}
   m_Layer: 8
-  m_Name: Square
+  m_Name: RotationSquare
   m_TagString: Square
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -80,7 +80,7 @@ public class ButtonTrigger : MonoBehaviour
                         point.gameObject.SetActive(false);
                 }
 
-                StopParticles();
+                //StopParticles();
             }
         }
     }

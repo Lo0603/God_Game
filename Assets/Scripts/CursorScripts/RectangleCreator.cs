@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RectangleCreator : MonoBehaviour
+public class RectangleCreator : MonoBehaviour, IResettable
 {
     public GameObject rectanglePrefab;
     public GameObject mouseObject;
@@ -185,5 +185,13 @@ public class RectangleCreator : MonoBehaviour
     public Vector2 GetRectangleSize()
     {
         return currentRectangle != null ? currentRectangle.transform.localScale : Vector2.zero;
+    }
+    
+    public void ResetState()
+    {
+        Destroy(currentRectangle);  // 現在の四角形オブジェクトの削除
+        currentRectangle = null;    // 参照除去
+        isCreating = false;         // 生成モード終了
+        mouseObject.SetActive(true); // マウス オブジェクトの再アクティブ化
     }
 }
