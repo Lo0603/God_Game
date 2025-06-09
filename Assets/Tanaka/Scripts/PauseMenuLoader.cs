@@ -8,6 +8,10 @@ public class PauseMenuLoader : MonoBehaviour
 {
 	[SerializeField] private MenuBuilder menuBuilder;
 
+	[Header("Button Icon")]
+	[SerializeField] private Image resumeIcon;
+	[SerializeField] private Image titleIcon;
+
 	// メニュー項目の定義をメンバ変数化
 	private List<MenuItemData> items;
 
@@ -20,14 +24,16 @@ public class PauseMenuLoader : MonoBehaviour
 
 		items.Add(new MenuItemData(
 			"Resume",
-			() => ResumeGame()/*,
-			Resume*/
+			() => ResumeGame(),
+			/*Resume*/
+			resumeIcon
 		));
 
 		items.Add(new MenuItemData(
 			"Title",
-			() => SceneManager.LoadScene("Title")/*,
-			Title*/
+			() => SceneManager.LoadScene("Title"),
+			/*Title*/
+			titleIcon
 		));
 
 		menuBuilder.BuildMenu(items);

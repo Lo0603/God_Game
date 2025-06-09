@@ -16,6 +16,11 @@ public class TitleMenuLoader : MonoBehaviour
 	[Header("Quit Sprite Swap")]
 	[SerializeField] private SpriteState quit;
 
+	[Header("Button Icon")]
+	[SerializeField] private Image startIcon;
+	[SerializeField] private Image selectIcon;
+	[SerializeField] private Image quitIcon;
+
 	private void OnEnable() => BuildMenu();
 	private void Start() => BuildMenu();
 
@@ -25,20 +30,23 @@ public class TitleMenuLoader : MonoBehaviour
 
 		items.Add(new MenuItemData(
 			"Start",
-			() => LoadingManager.LoadScene("Stage1")/*,
-			start*/
+			() => LoadingManager.LoadScene("Stage1"),
+			/*start*/
+			startIcon
 		));
 
 		items.Add(new MenuItemData(
 			"Select",
-			() => SceneManager.LoadSceneAsync("Select")/*,
-			select*/
+			() => SceneManager.LoadSceneAsync("Select"),
+			/*select*/
+			selectIcon
 		));
 
 		items.Add(new MenuItemData(
 			"Quit",
-			() => GameEnd()/*,
-			quit*/
+			() => GameEnd(),
+			/*quit*/
+			quitIcon
 		));
 
 		menuBuilder.BuildMenu(items);

@@ -25,7 +25,7 @@ public class PauseManager : MonoBehaviour
 			pauseCanvas.SetActive(false);
 
 		if (resume != null)
-			resume.onClick.AddListener(() => ToggleOption(false));
+			resume.onClick.AddListener(() => TogglePause(false));
 
 		if (returnToTitle != null)
 			returnToTitle.onClick.AddListener(ReturnToTitle);
@@ -37,12 +37,11 @@ public class PauseManager : MonoBehaviour
 		// Tab キーでオプション開閉
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
-			ToggleOption(!isResumeOpen);
+			TogglePause(!isResumeOpen);
 		}
 		if (!isResumeOpen) return;
 
-		// 下キー：Return → Back に移動、Back → Return へループ
-		if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+		if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S))
 		{
 			selectedButtonIndex = (selectedButtonIndex + 1) % buttonLabels.Length;
 			return;
@@ -53,18 +52,16 @@ public class PauseManager : MonoBehaviour
 		{
 			if (selectedButtonIndex == 0)
 			{
-				// 「タイトルに戻る」処理
-				ReturnToTitle();
+				TogglePause(false);
 			}
 			else if (selectedButtonIndex == 1)
 			{
-				// 「オプションを閉じる」処理
-				ToggleOption(false);
+				ReturnToTitle();
 			}
 		}
 	}
 
-	private void ToggleOption(bool open)
+	private void TogglePause(bool open)
 	{
 		isResumeOpen = open;
 		pauseCanvas.SetActive(open);

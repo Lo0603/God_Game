@@ -17,6 +17,11 @@ public class ResultMenuLoader : MonoBehaviour
 	[Header("Top Swap States")]
 	[SerializeField] private SpriteState top;
 
+	[Header("Button Icon")]
+	[SerializeField] private Image nextIcon;
+	[SerializeField] private Image againIcon;
+	[SerializeField] private Image titleIcon;
+
 	[Header("Stage Settings")]
 	[SerializeField] private int totalStages = 10;  // 全ステージ数
 
@@ -44,21 +49,24 @@ public class ResultMenuLoader : MonoBehaviour
 			int nextStage = currentStage + 1;
 			items.Add(new MenuItemData(
 				"Next",
-				() => LoadingManager.LoadScene($"Stage{nextStage}")/*,
-				next*/
+				() => LoadingManager.LoadScene($"Stage{nextStage}"),
+				/*next*/
+				nextIcon
 			));
 		}
 
 		items.Add(new MenuItemData(
 			"Play Again",
-			() => LoadingManager.LoadScene(sceneName)/*,
-			again*/
+			() => LoadingManager.LoadScene(sceneName),
+			/*again*/
+			againIcon
 		));
 
 		items.Add(new MenuItemData(
-			"Top",
-			() => SceneManager.LoadSceneAsync("TitleScene")/*,
-			top*/
+			"Title",
+			() => SceneManager.LoadSceneAsync("TitleScene"),
+			/*top*/
+			titleIcon
 		));
 
 		menuBuilder.BuildMenu(items);
