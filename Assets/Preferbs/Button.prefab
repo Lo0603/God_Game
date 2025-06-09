@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8316642053834920528}
   - component: {fileID: 8316642053834920543}
   - component: {fileID: 8316642053834920530}
+  - component: {fileID: -5284145145569338491}
   m_Layer: 11
   m_Name: Button
   m_TagString: Button
@@ -103,6 +104,8 @@ MonoBehaviour:
   normalSprite: {fileID: 5398807837072792716, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
   pressedSprite: {fileID: 1753668014, guid: 10f3cacccb0c4c547be76836eba20664, type: 3}
   targetTilemap: {fileID: 0}
+  particlePrefab: {fileID: 0}
+  particleSpawnPoints: []
 --- !u!61 &8316642053834920530
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -129,3 +132,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-5284145145569338491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8316642053834920542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc669d64f50216644bc5aa9f43c69dc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

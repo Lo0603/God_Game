@@ -14,6 +14,7 @@ public class StageResetManager : MonoBehaviour
 
     public void ResetStage()
     {
+        Debug.Log("ResetStage sussces!");
         foreach (var obj in resettableObjects)
         {
             obj.ResetState();

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2659326796756120351}
   - component: {fileID: 2659326796756120350}
   - component: {fileID: 2659326796756120337}
+  - component: {fileID: 3694836993371169686}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -31,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 2659326796756120336}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -33.8, y: -16.7, z: 0}
-  m_LocalScale: {x: 10, y: 5, z: 5}
+  m_LocalScale: {x: 10, y: 10, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 457078229, guid: 10f3cacccb0c4c547be76836eba20664, type: 3}
+  m_Sprite: {fileID: -2061508770, guid: 3657824be3bf43c48a0330dc09446844, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -158,8 +159,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.044303376, y: -0.002470197}
-  m_Size: {x: 0.8539719, y: 1.0039159}
+  m_Offset: {x: -0.013846114, y: -0.0058398237}
+  m_Size: {x: 0.9754595, y: 0.5101424}
   m_Direction: 1
 --- !u!114 &2659326796756120337
 MonoBehaviour:
@@ -175,3 +176,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   tileSize: 5
+--- !u!114 &3694836993371169686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2659326796756120336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6acff832263a67459b6c198551cba45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
