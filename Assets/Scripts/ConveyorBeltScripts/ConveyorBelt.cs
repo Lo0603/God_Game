@@ -17,6 +17,7 @@ public class ConveyorBelt : MonoBehaviour
         // 충돌한 오브젝트의 상대 위치 판단
         Vector2 relativePos = other.transform.position - transform.position;
         float side = Mathf.Sign(Vector2.Dot(relativePos, transform.up)); // 위면: +1, 아래면: -1
+        side = 1;
 
         // 상면/하면 방향으로 이동 방향 조정
         Vector2 finalMoveDir = worldDir * side;
