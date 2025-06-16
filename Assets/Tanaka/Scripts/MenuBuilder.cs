@@ -7,7 +7,7 @@ using TMPro;
 public class MenuBuilder : MonoBehaviour
 {
 	[SerializeField] private GameObject buttonPrefab; // MenuButtonプレハブ
-	[SerializeField] private Transform panelParent;   // MenuPanelのTransform
+	[SerializeField] public Transform panelParent;   // MenuPanelのTransform
 
 	/// <summary>
 	/// menuItems からボタンを作り、最初に作ったボタンを自動で選択状態にします
@@ -15,8 +15,7 @@ public class MenuBuilder : MonoBehaviour
 	public void BuildMenu(List<MenuItemData> menuItems)
 	{
 		// 既存の子オブジェクトを全削除
-		foreach (Transform child in panelParent)
-			Destroy(child.gameObject);
+		Clear();
 
 		GameObject firstButton = null;
 
@@ -35,8 +34,6 @@ public class MenuBuilder : MonoBehaviour
 			var btn = btnObj.GetComponent<Button>();
 			if (btn != null)
 				btn.onClick.AddListener(() => item.onClick?.Invoke());
-
-			//Debug.Log($"Menu item '{item.label}' added to the menu.");
 		}
 
 		// 最初のボタンを選択状態に
@@ -52,7 +49,18 @@ public class MenuBuilder : MonoBehaviour
 	/// </summary>
 	public void Clear()
 	{
-		foreach (Transform child in panelParent)
-			Destroy(child.gameObject);
+#if UNITY_EDITOR
+		// エディタ上では即時に削除して、BuildMenu 直後に panelParent.childCount が 0 になるように
+		while (panelParent.childCount > 0)
+		{
+			DestroyImmediate(panelParent.GetChild(0).gameObject);
+		}
+#else
+        // 実行時は Destroy() でも OK
+        foreach (Transform child in panelParent)
+        {
+            Destroy(child.gameObject);
+        }
+#endif
 	}
 }
