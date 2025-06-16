@@ -58,11 +58,11 @@ public class RotateInArea : MonoBehaviour
                     isFading = false;
                     Debug.Log("禁止");
                 });
-
+                SoundManager.Instance.PlaySE("反転できない時２");
                 Debug.Log("回転不可");
                 return;
             }
-
+            SoundManager.Instance.PlaySE("反転１");
             if (particleSpawner != null) // particle
                 particleSpawner.PlayParticlesAround(rectanglePrefab.transform.position, rectanglePrefab.transform.localScale);
             StartFadeAndRotate(isXAxis: false);  // Y軸回転
@@ -83,11 +83,11 @@ public class RotateInArea : MonoBehaviour
                     isFading = false;
                     Debug.Log("禁止");
                 });
-
+                SoundManager.Instance.PlaySE("反転できない時２");
                 Debug.Log("回転不可");
                 return;
             }
-
+            SoundManager.Instance.PlaySE("反転１");
             if (particleSpawner != null) // particle
                 particleSpawner.PlayParticlesAround(rectanglePrefab.transform.position, rectanglePrefab.transform.localScale);
             StartFadeAndRotate(isXAxis: true);   // X軸回転

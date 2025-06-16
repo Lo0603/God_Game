@@ -68,6 +68,7 @@ public class PlayerMoving : MonoBehaviour
         {
             if (isMoving)
             {
+                SoundManager.Instance.StopLoopSE("ロボの移動中");
                 stoppingSoon = true;
                 targetX = CalculateNextTilePosition();
             }
@@ -150,6 +151,7 @@ public class PlayerMoving : MonoBehaviour
 
     void StartMoving()
     {
+        SoundManager.Instance.PlayLoopSE("ロボの移動中");
         isMoving = true;
         stoppingSoon = false;
         anim.SetBool("isWalking", true);

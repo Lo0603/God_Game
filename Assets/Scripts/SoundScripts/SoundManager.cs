@@ -9,6 +9,7 @@ public class SoundManager : MonoBehaviour
 
     public AudioSource bgmSource; // BGM用AudioSource
     public AudioSource seSource;  // SE用AudioSource
+    Dictionary<string, AudioSource> loopSESources = new Dictionary<string, AudioSource>();
 
     public AudioClip[] bgmClips; // BGM用の音ファイル一覧
     public AudioClip[] seClips;  // SE用の音ファイル一覧
@@ -52,6 +53,35 @@ public class SoundManager : MonoBehaviour
         if (clip != null)
         {
             seSource.PlayOneShot(clip);
+        }
+    }
+
+    public void PlayLoopSE(string name)
+    {
+        if (loopSESources.ContainsKey(name))
+        {
+            // もう再生中なら停止
+            return;
+        }
+
+        AudioClip clip = GetClipByName(seClips, name);
+        if (clip != null)
+        {
+            AudioSource source = gameObject.AddComponent<AudioSource>();
+            source.clip = clip;
+            source.loop = true;
+            source.Play();
+            loopSESources[name] = source;
+        }
+    }
+
+    public void StopLoopSE(string name)
+    {
+        if (loopSESources.TryGetValue(name, out AudioSource source))
+        {
+            source.Stop();
+            Destroy(source);
+            loopSESources.Remove(name);
         }
     }
 

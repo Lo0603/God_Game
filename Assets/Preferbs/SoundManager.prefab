@@ -242,4 +242,10 @@ MonoBehaviour:
   seSource: {fileID: 4647437217088844473}
   bgmClips:
   - {fileID: 8300000, guid: 916a814247b348742a5dd527556635f2, type: 3}
-  seClips: []
+  - {fileID: 8300000, guid: 94b0ede236b8aeb46a06dc41599eed16, type: 3}
+  - {fileID: 8300000, guid: 3001d05868052614da1939048c52f88b, type: 3}
+  seClips:
+  - {fileID: 8300000, guid: 48cc763a68c80e54084ff9f2f9254259, type: 3}
+  - {fileID: 8300000, guid: 1d8f1957931f74e4b8dc5ce02462f40b, type: 3}
+  - {fileID: 8300000, guid: 9658cef4116c9df4fb66ddcc83cadfd5, type: 3}
+  - {fileID: 8300000, guid: 9b59040163e860d47a2a908031343c96, type: 3}
