@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -6,116 +7,85 @@ using UnityEngine.UI;
 
 public class TitleMenuLoader : MonoBehaviour
 {
-	[SerializeField] private MenuBuilder menuBuilder;
+	[SerializeField] private MenuBuilder menuBuilder; // メニュー生成を行うビルダー
 
-	[Header("Transition用スプライト配列（ボタン順：Start, Select, Quit）")]
-	[SerializeField] private Sprite[] defaultSprites;
-	[SerializeField] private Sprite[] highlightedSprites;
-	[SerializeField] private Sprite[] pressedSprites;
-	[SerializeField] private Sprite[] disabledSprites;
+	[Header("Button Images (Start, Select, Quit)")]
+	[SerializeField] private Sprite startSprite;
+	[SerializeField] private Sprite selectSprite;
+	[SerializeField] private Sprite quitSprite;
 
-	private List<MenuItemData> items;
+	private List<MenuItemData> items; // メニュー項目を保持するリスト
 
-	private GameObject _lastSelected;
 
 	private void Start()
 	{
 		// メニュー項目の定義
 		items = new List<MenuItemData>()
 		{
-			new MenuItemData(
-				"Start",
-				() => LoadingManager.LoadScene("Stage1")
-			),
-			new MenuItemData(
-				"Select",
-				() => SceneManager.LoadSceneAsync("Select")
-			),
-			new MenuItemData(
-				"Quit",
-				() => GameEnd()
-			)
+			new MenuItemData("Start",  ()=> LoadingManager.LoadScene("Stage1")),
+			new MenuItemData("Select", ()=> SceneManager.LoadSceneAsync("Select")),
+			new MenuItemData("Quit",   ()=> GameEnd())
 		};
 
 		// メニュー生成
 		menuBuilder.BuildMenu(items);
 
-		// SpriteSwap 設定を適用
-		ApplySpriteSwap();
+		// ボタンの Image コンポーネントにスプライトを割り当て
+		ApplyButtonImages();
+
+		// ボタン選択時にスケール変更する
+		ApplyButtonScaleEffects();
 
 		// 最初のボタンにフォーカス
 		var firstBtn = menuBuilder.panelParent.GetChild(0).gameObject;
 		EventSystem.current.SetSelectedGameObject(firstBtn);
+		var eventData = new BaseEventData(EventSystem.current);
+		ExecuteEvents.Execute(firstBtn, eventData, ExecuteEvents.selectHandler);
 	}
 
-	private void Update()
+	private void ApplyButtonImages()
 	{
-		// EventSystem から現在選択中の GameObject を取得
-		var current = EventSystem.current.currentSelectedGameObject;
-		if (current != _lastSelected)
+		var parent = menuBuilder.panelParent;
+		for (int i = 0; i < parent.childCount; i++)
 		{
-			_lastSelected = current;
-			if (current != null)
+			var btnObj = parent.GetChild(i).gameObject;
+
+			var btn = btnObj.GetComponent<Button>();
+			if (btn != null)
 			{
-				// 名前と、panelParent 内でのインデックスを取得してログ
-				int idx = current.transform.GetSiblingIndex();
-				Debug.Log($"<color=cyan>Selected Button</color>: {current.name} (Index {idx})");
+				// Sprite を当てる
+				switch (i)
+				{
+					case 0: if (startSprite != null) btn.image.sprite = startSprite; break;
+					case 1: if (selectSprite != null) btn.image.sprite = selectSprite; break;
+					case 2: if (quitSprite != null) btn.image.sprite = quitSprite; break;
+				}
 			}
-			else
-			{
-				Debug.Log("<color=cyan>Selection cleared</color>");
-			}
+
+			var tmp = btnObj.GetComponentInChildren<TMP_Text>();
+			if (tmp != null)
+				tmp.gameObject.SetActive(false);
 		}
 	}
 
-	private void ApplySpriteSwap()
+	private void ApplyButtonScaleEffects()
 	{
-		Transform parent = menuBuilder.panelParent;
+		var parent = menuBuilder.panelParent;
 		int count = parent.childCount;
 
 		for (int i = 0; i < count; i++)
 		{
 			var btnObj = parent.GetChild(i).gameObject;
-			var btn = parent.GetChild(i).GetComponent<Button>();
+			var btn = btnObj.GetComponent<Button>();
 			if (btn == null) continue;
 
-			// Unity が内部で使う Image を取り出す
-			var img = btn.image;
-			if (img == null) continue;
+			// 拡大縮小用コンポーネントを追加
+			var scaler = btnObj.AddComponent<ButtonScaleOnSelect>();
+			// 必要ならスクリプト側で変更可能
+			// scaler.normalScale   = new Vector3(1f, 1f, 1f);
+			// scaler.selectedScale = new Vector3(1.2f,1.2f,1f);
 
-			// トランジションを SpriteSwap に
-			btn.transition = Selectable.Transition.SpriteSwap;
-			btn.targetGraphic = img;
-
-			// デフォルトスプライトを設定
-			if (i < defaultSprites.Length && defaultSprites[i] != null)
-				img.sprite = defaultSprites[i];
-			else
-				Debug.LogWarning($"defaultSprites[{i}] が設定されていません。");
-
-			// 各状態用スプライトを構築
-			//SpriteState ss = new SpriteState
-			//{
-			//	highlightedSprite = (i < highlightedSprites.Length && highlightedSprites[i] != null)
-			//					  ? highlightedSprites[i]
-			//					  : img.sprite,
-			//	pressedSprite = (i < pressedSprites.Length && pressedSprites[i] != null)
-			//					  ? pressedSprites[i]
-			//					  : img.sprite,
-			//	disabledSprite = (i < disabledSprites.Length && disabledSprites[i] != null)
-			//					  ? disabledSprites[i]
-			//					  : img.sprite
-			//};
-			//btn.spriteState = ss;
-
-			var ctrl = btnObj.AddComponent<SelectionSpriteController>();
-			Sprite normal = (i < defaultSprites.Length) ? defaultSprites[i] : img.sprite;
-			Sprite highlighted = (i < highlightedSprites.Length) ? highlightedSprites[i] : normal;
-			Sprite pressed = (i < pressedSprites.Length) ? pressedSprites[i] : normal;
-			Sprite disabled = (i < disabledSprites.Length) ? disabledSprites[i] : normal;
-			ctrl.Init(img, normal, highlighted, pressed, disabled);
-
-			// Navigation を Explicit に設定して左右移動を有効化
+			// ナビゲーションをExplicitで設定
 			var nav = new Navigation { mode = Navigation.Mode.Explicit };
 			if (i > 0)
 				nav.selectOnLeft = parent.GetChild(i - 1).GetComponent<Button>();
