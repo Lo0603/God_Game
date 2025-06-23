@@ -1,66 +1,131 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ResultMenuLoader : MonoBehaviour
 {
 	[Header("Menu Builder")]
-	[SerializeField] private MenuBuilder menuBuilder;
+	[SerializeField] private GameObject resultCanvas;
+	[SerializeField] private MenuBuilder menuBuilder; // メニュー生成を行うビルダー
 
-	[Header("Next Swap States")]
-	[SerializeField] private SpriteState next;
+	[Header("Button Sprites (Next, Select, Title)")]
+	[SerializeField] private Sprite nextSprite;
+	[SerializeField] private Sprite selectSprite;
+	[SerializeField] private Sprite titleSprite;
 
-	[Header("Play Again Swap States")]
-	[SerializeField] private SpriteState again;
+	private List<MenuItemData> items; // メニュー項目を保持するリスト
 
-	[Header("Top Swap States")]
-	[SerializeField] private SpriteState top;
+	private int totalStages = 10;  // 全ステージ数
 
-	[Header("Stage Settings")]
-	[SerializeField] private int totalStages = 10;  // 全ステージ数
-
-	private void OnEnable() => BuildMenu();
-	private void Start() => BuildMenu();
-
-	private void BuildMenu()
+	private void Awake()
 	{
-		menuBuilder.Clear();
+		// Canvas は最初オフにしておく
+		if (resultCanvas != null)
+			resultCanvas.SetActive(false);
+	}
 
-		// 今のステージ番号をシーン名から取得
-		string sceneName = SceneManager.GetActiveScene().name;
-		int currentStage = 0;
-		if (sceneName.StartsWith("Stage") &&
-			int.TryParse(sceneName.Substring("Stage".Length), out var num))
+	public void ShowResult(int currentStage)
+	{
+		if (resultCanvas == null || menuBuilder == null)
 		{
-			currentStage = num;
+			Debug.LogError("ResultMenuLoader: resultCanvas／menuBuilder をセットしてください");
+			return;
 		}
 
-		var items = new List<MenuItemData>();
+		// 1) Canvas を表示
+		resultCanvas.SetActive(true);
 
-		// Next ボタン：10ステージ未満なら表示
-		if (currentStage > 0 && currentStage < totalStages)
+		// 2) メニュー項目を組み立て
+		items = new List<MenuItemData>();
+		// Next は最終ステージ以外
+		if (currentStage < totalStages)
 		{
-			int nextStage = currentStage + 1;
 			items.Add(new MenuItemData(
 				"Next",
-				() => LoadingManager.LoadScene($"Stage{nextStage}")/*,
-				next*/
+				() => SceneManager.LoadScene($"Stage{currentStage + 1}")
 			));
 		}
-
+		// Select
 		items.Add(new MenuItemData(
-			"Play Again",
-			() => LoadingManager.LoadScene(sceneName)/*,
-			again*/
+			"Select",
+			() => LoadingManager.LoadScene("Select")
+		));
+		items.Add(new MenuItemData(
+			"Title",
+			() => SceneManager.LoadScene("Title")
 		));
 
-		items.Add(new MenuItemData(
-			"Top",
-			() => SceneManager.LoadSceneAsync("TitleScene")/*,
-			top*/
-		));
-
+		// 3) ボタンを生成
 		menuBuilder.BuildMenu(items);
+
+		// 4) 画像を当てる
+		ApplyButtonImages();
+
+		// 5) 拡大エフェクト + キー移動ナビを設定
+		ApplyButtonScaleEffects();
+
+		// 6) 最初のボタンにフォーカス
+		var firstBtn = menuBuilder.panelParent.GetChild(0).gameObject;
+		EventSystem.current.SetSelectedGameObject(firstBtn);
+		ExecuteEvents.Execute(
+			firstBtn,
+			new BaseEventData(EventSystem.current),
+			ExecuteEvents.selectHandler
+		);
+	}
+
+	private void ApplyButtonImages()
+	{
+		var parent = menuBuilder.panelParent;
+		for (int i = 0; i < parent.childCount; i++)
+		{
+			var btnObj = parent.GetChild(i).gameObject;
+
+			var btn = btnObj.GetComponent<Button>();
+			if (btn != null)
+			{
+				// Sprite を当てる
+				switch (i)
+				{
+					case 0: if (nextSprite != null) btn.image.sprite = nextSprite; break;
+					case 1: if (selectSprite != null) btn.image.sprite = selectSprite; break;
+					case 2: if (titleSprite != null) btn.image.sprite = titleSprite; break;
+				}
+			}
+
+			var tmp = btnObj.GetComponentInChildren<TMP_Text>();
+			if (tmp != null)
+				tmp.gameObject.SetActive(false);
+		}
+	}
+
+	private void ApplyButtonScaleEffects()
+	{
+		var parent = menuBuilder.panelParent;
+		int count = parent.childCount;
+
+		for (int i = 0; i < count; i++)
+		{
+			var btnObj = parent.GetChild(i).gameObject;
+			var btn = btnObj.GetComponent<Button>();
+			if (btn == null) continue;
+
+			// 拡大縮小用コンポーネントを追加
+			var scaler = btnObj.AddComponent<ButtonScaleOnSelect>();
+			// 必要ならスクリプト側で変更可能
+			// scaler.normalScale   = new Vector3(1f, 1f, 1f);
+			// scaler.selectedScale = new Vector3(1.2f,1.2f,1f);
+
+			// ナビゲーションをExplicitで設定
+			var nav = new Navigation { mode = Navigation.Mode.Explicit };
+			if (i > 0)
+				nav.selectOnLeft = parent.GetChild(i - 1).GetComponent<Button>();
+			if (i < count - 1)
+				nav.selectOnRight = parent.GetChild(i + 1).GetComponent<Button>();
+			btn.navigation = nav;
+		}
 	}
 }
