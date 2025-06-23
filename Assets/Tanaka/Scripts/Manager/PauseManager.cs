@@ -7,33 +7,39 @@ using TMPro;
 public class PauseManager : MonoBehaviour
 {
 	[Header("UI Elements")]
-	[SerializeField] private GameObject pauseCanvas;        // ポーズ全体の Canvas
-	[SerializeField] private Button resumeButton;           // 再開ボタン
-	[SerializeField] private Button restartButton;          // リスタートボタン
-	[SerializeField] private Button returnToTitleButton;    // タイトルへ戻るボタン
+	[SerializeField] private GameObject pauseCanvas;
+	[SerializeField] private Button resumeButton;
+	[SerializeField] private Button restartButton;
+	[SerializeField] private Button returnToTitleButton;
 
 	[Header("Button Images (optional)")]
-	[SerializeField] private Sprite resumeSprite;           // Resume 用画像
-	[SerializeField] private Sprite restartSprite;          // Restart 用画像
-	[SerializeField] private Sprite returnSprite;           // Return 用画像
+	[SerializeField] private Sprite resumeSprite;
+	[SerializeField] private Sprite restartSprite;
+	[SerializeField] private Sprite returnSprite;
+
+
+	[SerializeField] private Vector3 normalScale = Vector3.one;
+	[SerializeField] private Vector3 selectedScale = new Vector3(1.2f, 1.2f, 1f);
 
 	[Header("Key Bindings")]
-	[SerializeField] private KeyCode toggleKey = KeyCode.Escape;   // 開閉キー
-	[SerializeField] private KeyCode upKey = KeyCode.UpArrow;  // 上移動キー
-	[SerializeField] private KeyCode downKey = KeyCode.DownArrow;// 下移動キー
-	[SerializeField] private KeyCode confirmKey = KeyCode.Return;   // 決定キー
+	[SerializeField] private KeyCode toggleKey = KeyCode.Escape;
+	[SerializeField] private KeyCode upKey = KeyCode.UpArrow;
+	[SerializeField] private KeyCode downKey = KeyCode.DownArrow;
+	[SerializeField] private KeyCode confirmKey = KeyCode.Return;
 
 	private Button[] buttons;
 	private int selectedButtonIndex = 0;
 	private bool isPauseOpen = false;
+	private float _defaultFixedDeltaTime;
 
 	private void Start()
 	{
-		// 1. 最初は非表示
+		_defaultFixedDeltaTime = Time.fixedDeltaTime;
+
+		// 初期セットアップ
 		pauseCanvas.SetActive(false);
 		Time.timeScale = 1f;
 
-		// 2. onClick 登録
 		resumeButton.onClick.AddListener(() => TogglePause(false));
 		restartButton.onClick.AddListener(() =>
 		{
@@ -47,30 +53,39 @@ public class PauseManager : MonoBehaviour
 			SceneManager.LoadScene("Title");
 		});
 
-		// 3. ボタン配列を作り、各種エフェクト／設定を適用
 		buttons = new[] { resumeButton, restartButton, returnToTitleButton };
-		ApplyButtonScaleEffects();
+
+		// テキストを非表示＆画像をセット
 		HideButtonText(resumeButton);
 		HideButtonText(restartButton);
 		HideButtonText(returnToTitleButton);
 		ApplyButtonImages();
+
+		// ナビゲーション設定（Automatic で上下キーを自動でつなぐ）
+		foreach (var btn in buttons)
+		{
+			var nav = btn.navigation;
+			nav.mode = Navigation.Mode.Automatic;
+			btn.navigation = nav;
+		}
+
+		// 全ボタンを通常サイズに
+		foreach (var btn in buttons)
+			btn.GetComponent<RectTransform>().localScale = normalScale;
 	}
 
 	private void Update()
 	{
-		// ポーズ開閉
 		if (Input.GetKeyDown(toggleKey))
 			TogglePause(!isPauseOpen);
 
 		if (!isPauseOpen) return;
 
-		// 選択移動
 		if (Input.GetKeyDown(upKey))
 			ChangeSelection(-1);
 		else if (Input.GetKeyDown(downKey))
 			ChangeSelection(+1);
 
-		// 決定
 		if (Input.GetKeyDown(confirmKey))
 			buttons[selectedButtonIndex].onClick.Invoke();
 	}
@@ -79,58 +94,50 @@ public class PauseManager : MonoBehaviour
 	{
 		isPauseOpen = open;
 		pauseCanvas.SetActive(open);
-		Time.timeScale = open ? 0f : 1f;
+
 		if (open)
 		{
+			// ポーズ開始：時間を完全に止める
+			Time.timeScale = 0f;
+			Time.fixedDeltaTime = 0f;
 			EventSystem.current.SetSelectedGameObject(null);
 			selectedButtonIndex = 0;
-			var btn = resumeButton;
-			btn.Select();
-			ExecuteEvents.Execute(
-				btn.gameObject,
-				new BaseEventData(EventSystem.current),
-				ExecuteEvents.selectHandler
-			);
+			resumeButton.Select();
+			UpdateButtonScales();
 		}
 		else
 		{
+			// ポーズ解除：元に戻す
+			Time.timeScale = 1f;
+			Time.fixedDeltaTime = _defaultFixedDeltaTime;
 			EventSystem.current.SetSelectedGameObject(null);
 		}
 	}
 
 	private void ChangeSelection(int direction)
 	{
-		// インデックス更新
+		// インデックスを回す
 		selectedButtonIndex = (selectedButtonIndex + direction + buttons.Length) % buttons.Length;
 
-		// Select() でフォーカス移動＆拡大
+		// 選択＆スケール更新
 		var btn = buttons[selectedButtonIndex];
 		btn.Select();
-		ExecuteEvents.Execute(
-			btn.gameObject,
-			new BaseEventData(EventSystem.current),
-			ExecuteEvents.selectHandler
-		);
+		UpdateButtonScales();
+
+		Debug.Log($"Selected: {btn.gameObject.name} (Index {selectedButtonIndex})");
 	}
 
-	private void ApplyButtonScaleEffects()
+	private void UpdateButtonScales()
 	{
-		foreach (var btn in buttons)
+		for (int i = 0; i < buttons.Length; i++)
 		{
-			// 選択時拡大コンポーネント
-			if (btn.gameObject.GetComponent<ButtonScaleOnSelect>() == null)
-				btn.gameObject.AddComponent<ButtonScaleOnSelect>();
-
-			// 自動ナビゲーション（上下キーで隣を探す）
-			var nav = btn.navigation;
-			nav.mode = Navigation.Mode.Automatic;
-			btn.navigation = nav;
+			var rt = buttons[i].GetComponent<RectTransform>();
+			rt.localScale = (i == selectedButtonIndex) ? selectedScale : normalScale;
 		}
 	}
 
 	private void HideButtonText(Button btn)
 	{
-		// TextMeshProUGUI がある場合は非表示
 		var tmp = btn.GetComponentInChildren<TMP_Text>();
 		if (tmp != null)
 			tmp.gameObject.SetActive(false);
@@ -138,7 +145,6 @@ public class PauseManager : MonoBehaviour
 
 	private void ApplyButtonImages()
 	{
-		// Inspector で画像をセットしている場合のみ差し替え
 		if (resumeSprite != null) resumeButton.image.sprite = resumeSprite;
 		if (restartSprite != null) restartButton.image.sprite = restartSprite;
 		if (returnSprite != null) returnToTitleButton.image.sprite = returnSprite;
