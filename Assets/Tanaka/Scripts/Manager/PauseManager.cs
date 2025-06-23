@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;  // テキスト非表示用
+using TMPro;
 
 public class PauseManager : MonoBehaviour
 {
@@ -23,7 +23,7 @@ public class PauseManager : MonoBehaviour
 	[SerializeField] private KeyCode downKey = KeyCode.DownArrow;// 下移動キー
 	[SerializeField] private KeyCode confirmKey = KeyCode.Return;   // 決定キー
 
-	private Button[] buttons;    // Resume, Restart, Return の配列
+	private Button[] buttons;
 	private int selectedButtonIndex = 0;
 	private bool isPauseOpen = false;
 
