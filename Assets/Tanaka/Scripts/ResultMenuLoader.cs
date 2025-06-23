@@ -8,96 +8,97 @@ using UnityEngine.UI;
 public class ResultMenuLoader : MonoBehaviour
 {
 	[Header("Menu Builder")]
+	[SerializeField] private GameObject resultCanvas;
 	[SerializeField] private MenuBuilder menuBuilder; // メニュー生成を行うビルダー
 
-	[Header("Stage Settings")]
-	[SerializeField] private int totalStages = 10;  // 全ステージ数
-
-	[Header("Button Sprites (Next, Play Again, Title)")]
+	[Header("Button Sprites (Next, Select, Title)")]
 	[SerializeField] private Sprite nextSprite;
-	[SerializeField] private Sprite playAgainSprite;
+	[SerializeField] private Sprite selectSprite;
 	[SerializeField] private Sprite titleSprite;
 
 	private List<MenuItemData> items; // メニュー項目を保持するリスト
 
+	private int totalStages = 10;  // 全ステージ数
 
-	private void Start()
+	private void Awake()
 	{
-		// 今のステージ番号をシーン名から取得
-		string sceneName = SceneManager.GetActiveScene().name;
-		int currentStage = 0;
-		if (sceneName.StartsWith("Stage") &&
-			int.TryParse(sceneName.Substring("Stage".Length), out var num))
+		// Canvas は最初オフにしておく
+		if (resultCanvas != null)
+			resultCanvas.SetActive(false);
+	}
+
+	public void ShowResult(int currentStage)
+	{
+		if (resultCanvas == null || menuBuilder == null)
 		{
-			currentStage = num;
+			Debug.LogError("ResultMenuLoader: resultCanvas／menuBuilder をセットしてください");
+			return;
 		}
 
-		// メニュー項目の定義
-		items = new List<MenuItemData>();
+		// 1) Canvas を表示
+		resultCanvas.SetActive(true);
 
-		// Next ボタン：10ステージ未満なら表示
-		if (currentStage > 0 && currentStage < totalStages)
+		// 2) メニュー項目を組み立て
+		items = new List<MenuItemData>();
+		// Next は最終ステージ以外
+		if (currentStage < totalStages)
 		{
-			int nextStage = currentStage + 1;
 			items.Add(new MenuItemData(
 				"Next",
-				() => LoadingManager.LoadScene($"Stage{nextStage}")
+				() => SceneManager.LoadScene($"Stage{currentStage + 1}")
 			));
 		}
-
-		// Play Again
+		// Select
 		items.Add(new MenuItemData(
-			"Play Again",
-			() => LoadingManager.LoadScene(sceneName)
+			"Select",
+			() => LoadingManager.LoadScene("Select")
 		));
-
-		// Title
 		items.Add(new MenuItemData(
 			"Title",
 			() => SceneManager.LoadScene("Title")
 		));
 
-		// メニュー生成
+		// 3) ボタンを生成
 		menuBuilder.BuildMenu(items);
 
-		// ボタン画像を設定＋テキストを非表示
-		ApplyButtonImagesAndHideText();
+		// 4) 画像を当てる
+		ApplyButtonImages();
 
-		// ボタン選択時にスケール変更する
+		// 5) 拡大エフェクト + キー移動ナビを設定
 		ApplyButtonScaleEffects();
 
-		// 最初のボタンにフォーカス
+		// 6) 最初のボタンにフォーカス
 		var firstBtn = menuBuilder.panelParent.GetChild(0).gameObject;
 		EventSystem.current.SetSelectedGameObject(firstBtn);
-		var eventData = new BaseEventData(EventSystem.current);
-		ExecuteEvents.Execute(firstBtn, eventData, ExecuteEvents.selectHandler);
+		ExecuteEvents.Execute(
+			firstBtn,
+			new BaseEventData(EventSystem.current),
+			ExecuteEvents.selectHandler
+		);
 	}
 
-	private void ApplyButtonImagesAndHideText()
+	private void ApplyButtonImages()
 	{
 		var parent = menuBuilder.panelParent;
 		for (int i = 0; i < parent.childCount; i++)
 		{
 			var btnObj = parent.GetChild(i).gameObject;
-			var btn = btnObj.GetComponent<Button>();
-			if (btn == null) continue;
 
-			// 画像を割り当て
-			switch (i)
+			var btn = btnObj.GetComponent<Button>();
+			if (btn != null)
 			{
-				case 0:
-					if (nextSprite != null) btn.image.sprite = nextSprite;
-					break;
-				case 1:
-					if (playAgainSprite != null) btn.image.sprite = playAgainSprite;
-					break;
-				case 2:
-					if (titleSprite != null) btn.image.sprite = titleSprite;
-					break;
+				// Sprite を当てる
+				switch (i)
+				{
+					case 0: if (nextSprite != null) btn.image.sprite = nextSprite; break;
+					case 1: if (selectSprite != null) btn.image.sprite = selectSprite; break;
+					case 2: if (titleSprite != null) btn.image.sprite = titleSprite; break;
+				}
 			}
 
 			var tmp = btnObj.GetComponentInChildren<TMP_Text>();
-			if (tmp != null) tmp.gameObject.SetActive(false);
+			if (tmp != null)
+				tmp.gameObject.SetActive(false);
 		}
 	}
 

@@ -23,7 +23,7 @@ public class TitleMenuLoader : MonoBehaviour
 		items = new List<MenuItemData>()
 		{
 			new MenuItemData("Start",  ()=> LoadingManager.LoadScene("Stage1")),
-			new MenuItemData("Select", ()=> SceneManager.LoadSceneAsync("Select")),
+			new MenuItemData("Select", ()=> SceneManager.LoadScene("Select")),
 			new MenuItemData("Quit",   ()=> GameEnd())
 		};
 

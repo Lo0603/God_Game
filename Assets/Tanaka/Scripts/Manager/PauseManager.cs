@@ -1,94 +1,78 @@
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;  // テキスト非表示用
 
-/// <summary>
-/// ポーズメニューの開閉と操作を管理します。
-/// キー操作でボタンを選択し、選択状態で拡大エフェクトをかけます。
-/// </summary>
 public class PauseManager : MonoBehaviour
 {
 	[Header("UI Elements")]
-	[SerializeField] private GameObject pauseCanvas;       // ポーズメニュー全体の Canvas
-	[SerializeField] private Button resumeButton;          // 「Resume」ボタン
-	[SerializeField] private Button returnToTitleButton;   // 「Return To Title」ボタン
+	[SerializeField] private GameObject pauseCanvas;        // ポーズ全体の Canvas
+	[SerializeField] private Button resumeButton;           // 再開ボタン
+	[SerializeField] private Button restartButton;          // リスタートボタン
+	[SerializeField] private Button returnToTitleButton;    // タイトルへ戻るボタン
 
-	[Header("Button Images")]
-	[SerializeField] private Sprite resumeSprite;
-	[SerializeField] private Sprite returnSprite;
+	[Header("Button Images (optional)")]
+	[SerializeField] private Sprite resumeSprite;           // Resume 用画像
+	[SerializeField] private Sprite restartSprite;          // Restart 用画像
+	[SerializeField] private Sprite returnSprite;           // Return 用画像
 
 	[Header("Key Bindings")]
-	[SerializeField] private KeyCode toggleKey = KeyCode.Escape; // メニュー開閉キー
-	[SerializeField] private KeyCode upKey = KeyCode.W;      // 上移動キー
-	[SerializeField] private KeyCode downKey = KeyCode.S;      // 下移動キー
-	[SerializeField] private KeyCode confirmKey = KeyCode.Return; // 決定キー
+	[SerializeField] private KeyCode toggleKey = KeyCode.Escape;   // 開閉キー
+	[SerializeField] private KeyCode upKey = KeyCode.UpArrow;  // 上移動キー
+	[SerializeField] private KeyCode downKey = KeyCode.DownArrow;// 下移動キー
+	[SerializeField] private KeyCode confirmKey = KeyCode.Return;   // 決定キー
 
-	private bool isPauseOpen = false;          // ポーズメニューが開いているか
-	private int selectedButtonIndex = 0;      // 現在選択中のボタンインデックス
-	private Button[] buttons;                  // 操作対象ボタン配列
+	private Button[] buttons;    // Resume, Restart, Return の配列
+	private int selectedButtonIndex = 0;
+	private bool isPauseOpen = false;
 
 	private void Start()
 	{
-		// 初期状態
+		// 1. 最初は非表示
 		pauseCanvas.SetActive(false);
 		Time.timeScale = 1f;
 
-		// ボタンの onClick 登録
+		// 2. onClick 登録
 		resumeButton.onClick.AddListener(() => TogglePause(false));
-		returnToTitleButton.onClick.AddListener(ReturnToTitle);
+		restartButton.onClick.AddListener(() =>
+		{
+			Time.timeScale = 1f;
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		});
+		returnToTitleButton.onClick.AddListener(() =>
+		{
+			Time.timeScale = 1f;
+			PlayerPrefs.Save();
+			SceneManager.LoadScene("Title");
+		});
 
-		// ボタン配列と拡大エフェクト＋ナビゲーション適用
-		buttons = new[] { resumeButton, returnToTitleButton };
+		// 3. ボタン配列を作り、各種エフェクト／設定を適用
+		buttons = new[] { resumeButton, restartButton, returnToTitleButton };
 		ApplyButtonScaleEffects();
-
 		HideButtonText(resumeButton);
+		HideButtonText(restartButton);
 		HideButtonText(returnToTitleButton);
-
-		if (resumeButton != null && resumeSprite != null)
-			resumeButton.image.sprite = resumeSprite;
-
-		if (returnToTitleButton != null && returnSprite != null)
-			returnToTitleButton.image.sprite = returnSprite;
+		ApplyButtonImages();
 	}
 
 	private void Update()
 	{
-		// トグルキーでポーズメニュー開閉
+		// ポーズ開閉
 		if (Input.GetKeyDown(toggleKey))
 			TogglePause(!isPauseOpen);
 
 		if (!isPauseOpen) return;
 
 		// 選択移動
-		if (Input.GetKeyDown(upKey)) ChangeSelection(-1);
-		else if (Input.GetKeyDown(downKey)) ChangeSelection(+1);
+		if (Input.GetKeyDown(upKey))
+			ChangeSelection(-1);
+		else if (Input.GetKeyDown(downKey))
+			ChangeSelection(+1);
 
-		// 決定キーで選択中のボタンを実行
+		// 決定
 		if (Input.GetKeyDown(confirmKey))
 			buttons[selectedButtonIndex].onClick.Invoke();
-	}
-
-	private void HideButtonText(Button btn)
-	{
-		var tmp = btn.GetComponentInChildren<TMP_Text>();
-		if (tmp != null)
-			tmp.gameObject.SetActive(false);
-	}
-
-	private void ChangeSelection(int direction)
-	{
-		int count = buttons.Length;
-		selectedButtonIndex = (selectedButtonIndex + direction + count) % count;
-
-		var btnGO = buttons[selectedButtonIndex].gameObject;
-		// フォーカス移動
-		EventSystem.current.SetSelectedGameObject(btnGO);
-		// OnSelect を強制発火して拡大させる
-		var ev = new BaseEventData(EventSystem.current);
-		ExecuteEvents.Execute(btnGO, ev, ExecuteEvents.selectHandler);
 	}
 
 	private void TogglePause(bool open)
@@ -96,40 +80,67 @@ public class PauseManager : MonoBehaviour
 		isPauseOpen = open;
 		pauseCanvas.SetActive(open);
 		Time.timeScale = open ? 0f : 1f;
-
 		if (open)
 		{
-			// 開いた時は最初のボタンを選択
+			EventSystem.current.SetSelectedGameObject(null);
 			selectedButtonIndex = 0;
-			ChangeSelection(0); // direction 0 で初回選択
+			var btn = resumeButton;
+			btn.Select();
+			ExecuteEvents.Execute(
+				btn.gameObject,
+				new BaseEventData(EventSystem.current),
+				ExecuteEvents.selectHandler
+			);
 		}
 		else
 		{
-			// 閉じた時はフォーカス解除
 			EventSystem.current.SetSelectedGameObject(null);
 		}
 	}
 
-	private void ReturnToTitle()
+	private void ChangeSelection(int direction)
 	{
-		Time.timeScale = 1f;
-		PlayerPrefs.Save();
-		SceneManager.LoadScene("Title");
+		// インデックス更新
+		selectedButtonIndex = (selectedButtonIndex + direction + buttons.Length) % buttons.Length;
+
+		// Select() でフォーカス移動＆拡大
+		var btn = buttons[selectedButtonIndex];
+		btn.Select();
+		ExecuteEvents.Execute(
+			btn.gameObject,
+			new BaseEventData(EventSystem.current),
+			ExecuteEvents.selectHandler
+		);
 	}
 
 	private void ApplyButtonScaleEffects()
 	{
-		for (int i = 0; i < buttons.Length; i++)
+		foreach (var btn in buttons)
 		{
-			var btn = buttons[i];
-			// 選択拡大／非選択縮小コンポーネントを追加
-			btn.gameObject.AddComponent<ButtonScaleOnSelect>();
+			// 選択時拡大コンポーネント
+			if (btn.gameObject.GetComponent<ButtonScaleOnSelect>() == null)
+				btn.gameObject.AddComponent<ButtonScaleOnSelect>();
 
-			// Explicit ナビゲーションを設定
-			var nav = new Navigation { mode = Navigation.Mode.Explicit };
-			if (i > 0) nav.selectOnUp = buttons[i - 1];
-			if (i < buttons.Length - 1) nav.selectOnDown = buttons[i + 1];
+			// 自動ナビゲーション（上下キーで隣を探す）
+			var nav = btn.navigation;
+			nav.mode = Navigation.Mode.Automatic;
 			btn.navigation = nav;
 		}
+	}
+
+	private void HideButtonText(Button btn)
+	{
+		// TextMeshProUGUI がある場合は非表示
+		var tmp = btn.GetComponentInChildren<TMP_Text>();
+		if (tmp != null)
+			tmp.gameObject.SetActive(false);
+	}
+
+	private void ApplyButtonImages()
+	{
+		// Inspector で画像をセットしている場合のみ差し替え
+		if (resumeSprite != null) resumeButton.image.sprite = resumeSprite;
+		if (restartSprite != null) restartButton.image.sprite = restartSprite;
+		if (returnSprite != null) returnToTitleButton.image.sprite = returnSprite;
 	}
 }
