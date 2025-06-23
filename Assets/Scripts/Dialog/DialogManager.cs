@@ -19,7 +19,7 @@ public class DialogManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        dialogPanel.SetActive(false);  // start‰B‚·
+        //dialogPanel.SetActive(false);  // start‰B‚·
     }
 
     // Update is called once per frame
@@ -48,7 +48,7 @@ public class DialogManager : MonoBehaviour
         sentences = dialogSentences;
         currentSentenceIndex = 0;
         dialogPanel.SetActive(true);
-        Time.timeScale = 0f;  // ƒQ[ƒ€stop
+        //Time.timeScale = 0f;  // ƒQ[ƒ€stop
 
         ShowSentence();
     }
