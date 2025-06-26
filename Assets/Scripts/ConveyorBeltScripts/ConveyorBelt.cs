@@ -24,6 +24,12 @@ public class ConveyorBelt : MonoBehaviour
 
         // 위치 이동
         other.attachedRigidbody.MovePosition(other.attachedRigidbody.position + finalMoveDir * moveSpeed * Time.deltaTime);
+
+        if (other.CompareTag("Player"))
+        {
+            PlayerMoving playerMoving=other.GetComponent<PlayerMoving>();
+            playerMoving.SetgetVectorX(moveSpeed * moveDirection.x);
+        }
     }
 
     // 회전/반전 대응 함수

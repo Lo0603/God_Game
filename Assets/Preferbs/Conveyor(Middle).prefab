@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8799686414745656376}
   m_Layer: 0
   m_Name: Conveyor(Middle)
-  m_TagString: Untagged
+  m_TagString: Conveyor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -102,6 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveDirection: {x: 1, y: 0}
   moveSpeed: 3
+  playerMoving: {fileID: 0}
 --- !u!61 &4380139360864954462
 BoxCollider2D:
   m_ObjectHideFlags: 0
