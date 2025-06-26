@@ -12,12 +12,12 @@ GameObject:
   - component: {fileID: 4819895581256763919}
   - component: {fileID: 4028321499439517800}
   m_Layer: 0
-  m_Name: SimpleEffect 1
+  m_Name: LightEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6720304141508506964
 Transform:
   m_ObjectHideFlags: 0

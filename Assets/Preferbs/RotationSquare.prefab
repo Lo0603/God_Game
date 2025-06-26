@@ -104,7 +104,7 @@ MonoBehaviour:
   areaSize: {x: 0, y: 0}
   rectanglePrefab: {fileID: 6197731100201858126}
   rotationAngle: 90
-  tilemap: {fileID: 0}
+  tilemaps: []
 --- !u!114 &-3708813797249918876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,4 +146,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c2fe581a5700447a0adb405aaa1d1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particlePrefab: {fileID: 1943160480823556528, guid: 51cf571df785bf94db7da2e962136d74, type: 3}
+  particlePrefab: {fileID: 5455535092022154546, guid: f97e963fc00056643b8dfc1d1af5e167, type: 3}

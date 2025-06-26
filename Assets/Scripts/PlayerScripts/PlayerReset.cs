@@ -30,6 +30,7 @@ public class PlayerReset : MonoBehaviour, IResettable
         transform.rotation = startRot;
 
         anim.SetBool("isWalking", false);
+        anim.SetBool("IsOpen", false);
         if (rb != null )
         {
             rb.gravityScale = startGravity;
