@@ -252,5 +252,6 @@ public class PlayerMoving : MonoBehaviour
     public void SetgetVectorX(float _getVectorX)
     {
         getVectorX = _getVectorX;
+        getVectorX /= 4;
     }
 }
