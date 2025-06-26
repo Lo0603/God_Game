@@ -15,6 +15,7 @@ public class RotateInArea : MonoBehaviour
     private RectangleCreator rectangleCreator;
     private bool canOperate = true;  // 操作可能かどうか
     private bool isFading = false;   // 演出中か確認
+    private ConveyorManager conveyorManager;
     void Start()
     {
     
@@ -61,6 +62,11 @@ public class RotateInArea : MonoBehaviour
                 SoundManager.Instance.PlaySE("反転できない時２");
                 Debug.Log("回転不可");
                 return;
+            }
+            if (HasBlockedTagInArea(new string[] { "Conveyor" }))
+            {
+                conveyorManager = FindObjectOfType<ConveyorManager>();
+                conveyorManager.SearchAndFlip(areaCenter.position, areaSize);
             }
             SoundManager.Instance.PlaySE("反転１");
             if (particleSpawner != null) // particle

@@ -21,6 +21,10 @@ public class PlayerMoving : MonoBehaviour
     private float originalGravity;
     private float storedGravity;
 
+    [Header("Conveyor")]
+    private float getVectorX;
+
+
     void Awake()
     {
         anim = GetComponent<Animator>();
@@ -47,6 +51,10 @@ public class PlayerMoving : MonoBehaviour
             }
 
             transform.position += Vector3.right * moveDirection * moveSpeed * Time.deltaTime;
+
+            transform.position = new Vector3(transform.position.x + getVectorX, transform.position.y, transform.position.z);
+
+            getVectorX = 0;
 
             // もしstopping Soon中なら目標地点チェック
             if (stoppingSoon && HasReachedTargetX())
@@ -239,5 +247,10 @@ public class PlayerMoving : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.x = Mathf.Abs(scale.x) * moveDirection;
         transform.localScale = scale;
+    }
+
+    public void SetgetVectorX(float _getVectorX)
+    {
+        getVectorX = _getVectorX;
     }
 }
