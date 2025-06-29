@@ -176,6 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   tileSize: 5
+  slowDown: 10
 --- !u!114 &3694836993371169686
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ public class PlayerMoving : MonoBehaviour
     [Header("Movement Settings")]
     public float moveSpeed = 2f;
     public float tileSize = 5f; // 추가: 타일 크기
+    public float slowDown = 4.0f;
 
     [Header("Internal States")]
     private bool isMoving = false;
@@ -252,6 +253,6 @@ public class PlayerMoving : MonoBehaviour
     public void SetgetVectorX(float _getVectorX)
     {
         getVectorX = _getVectorX;
-        getVectorX /= 4;
+        getVectorX /= slowDown;
     }
 }
