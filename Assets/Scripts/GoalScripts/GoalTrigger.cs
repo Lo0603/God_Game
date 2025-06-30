@@ -10,6 +10,9 @@ public class GoalTrigger : MonoBehaviour
 	[Header("Settings")]
 	public string playerTag = "Player";
 
+
+	private bool hasShowResult = false;
+
 	void Awake()
 	{
 		anim = GetComponent<Animator>();
@@ -36,8 +39,10 @@ public class GoalTrigger : MonoBehaviour
 			anim.SetBool("IsOpen", true);
 
 			ResultMenuLoader resultLoader = FindObjectOfType<ResultMenuLoader>();
-			if (resultLoader != null)
+			if (!hasShowResult && resultLoader != null)
 			{
+				hasShowResult = true; // –Ú•W‚É“ž’B‚µ‚½‚±‚Æ‚ð‹L˜^
+				Time.timeScale = 0f;
 				resultLoader.ShowResult(0);
 			}
 
