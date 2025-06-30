@@ -23,13 +23,14 @@ public class ResultMenuLoader : MonoBehaviour
 	private void Awake()
 	{
 		// Canvas は最初オフにしておく
-		if (resultCanvas != null)
-			resultCanvas.SetActive(false);
+		//if (resultCanvas != null)
+		//	resultCanvas.SetActive(false);
 	}
 
 	public void ShowResult(int currentStage)
 	{
-		if (resultCanvas == null || menuBuilder == null)
+        Debug.Log("result canvas");
+        if (resultCanvas == null || menuBuilder == null)
 		{
 			Debug.LogError("ResultMenuLoader: resultCanvas／menuBuilder をセットしてください");
 			return;

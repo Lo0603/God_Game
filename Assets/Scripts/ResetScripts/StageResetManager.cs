@@ -8,8 +8,8 @@ public class StageResetManager : MonoBehaviour
     private IResettable[] resettableObjects;
 
     public Transform player;
-    public float maxX = 100f;
-    public float maxY = 60f;
+    public float maxX = 5f;
+    public float maxY = 5;
 
     private Vector3 startPlayerPos;
 

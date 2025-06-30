@@ -10,6 +10,9 @@ public class GoalTrigger : MonoBehaviour
     [Header("Settings")]
 	public string playerTag = "Player";
 
+	[Header("UI")]
+	[SerializeField] private GameObject goalCanvas;
+
     void Awake()
     {
         anim = GetComponent<Animator>();
@@ -34,6 +37,12 @@ public class GoalTrigger : MonoBehaviour
             SoundManager.Instance.PlaySE("ClearSound");
 
             anim.SetBool("IsOpen",true);
+
+            ResultMenuLoader resultLoader = FindObjectOfType<ResultMenuLoader>();
+            if (resultLoader != null)
+            {
+                resultLoader.ShowResult(0);
+            }
 
             playerScript.StopMoving();
 			FindObjectOfType<CameraZoomController>().ZoomIn(other.transform);
