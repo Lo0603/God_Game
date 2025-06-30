@@ -8,6 +8,7 @@ public class PlayerMoving : MonoBehaviour
     [Header("Movement Settings")]
     public float moveSpeed = 2f;
     public float tileSize = 5f; // 추가: 타일 크기
+    public float slowDown = 4.0f;
 
     [Header("Internal States")]
     private bool isMoving = false;
@@ -20,6 +21,10 @@ public class PlayerMoving : MonoBehaviour
     private Rigidbody2D rb;
     private float originalGravity;
     private float storedGravity;
+
+    [Header("Conveyor")]
+    private float getVectorX;
+
 
     void Awake()
     {
@@ -47,6 +52,10 @@ public class PlayerMoving : MonoBehaviour
             }
 
             transform.position += Vector3.right * moveDirection * moveSpeed * Time.deltaTime;
+
+            transform.position = new Vector3(transform.position.x + getVectorX, transform.position.y, transform.position.z);
+
+            getVectorX = 0;
 
             // もしstopping Soon中なら目標地点チェック
             if (stoppingSoon && HasReachedTargetX())
@@ -240,5 +249,11 @@ public class PlayerMoving : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.x = Mathf.Abs(scale.x) * moveDirection;
         transform.localScale = scale;
+    }
+
+    public void SetgetVectorX(float _getVectorX)
+    {
+        getVectorX = _getVectorX;
+        getVectorX /= slowDown;
     }
 }

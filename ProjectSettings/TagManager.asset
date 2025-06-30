@@ -12,6 +12,7 @@ TagManager:
   - Cuttable
   - Button
   - GravityBlock
+  - Conveyor
   layers:
   - Default
   - TransparentFX
