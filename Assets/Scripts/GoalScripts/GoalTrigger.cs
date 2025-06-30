@@ -5,17 +5,17 @@ using UnityEngine;
 public class GoalTrigger : MonoBehaviour
 {
 	private PlayerMoving playerScript;
-    private Animator anim;
+	private Animator anim;
 
-    [Header("Settings")]
+	[Header("Settings")]
 	public string playerTag = "Player";
 
-    void Awake()
-    {
-        anim = GetComponent<Animator>();
-    }
-    // Start is called before the first frame update
-    void Start()
+	void Awake()
+	{
+		anim = GetComponent<Animator>();
+	}
+	// Start is called before the first frame update
+	void Start()
 	{
 		// player script íTçı
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -31,11 +31,17 @@ public class GoalTrigger : MonoBehaviour
 		{
 			Debug.Log("Goal!! Stage Clear!");
 
-            SoundManager.Instance.PlaySE("ClearSound");
+			SoundManager.Instance.PlaySE("ClearSound");
 
-            anim.SetBool("IsOpen",true);
+			anim.SetBool("IsOpen", true);
 
-            playerScript.StopMoving();
+			ResultMenuLoader resultLoader = FindObjectOfType<ResultMenuLoader>();
+			if (resultLoader != null)
+			{
+				resultLoader.ShowResult(0);
+			}
+
+			playerScript.StopMoving();
 			FindObjectOfType<CameraZoomController>().ZoomIn(other.transform);
 			// TODO: Ç†Ç∆Ç≈èàóùí«â¡
 			// Example:
