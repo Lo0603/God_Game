@@ -14,6 +14,9 @@ public class SoundManager : MonoBehaviour
     public AudioClip[] bgmClips; // BGM用の音ファイル一覧
     public AudioClip[] seClips;  // SE用の音ファイル一覧
 
+    [Range(0f, 1f)] public float bgmVolume = 1.0f;
+    [Range(0f, 1f)] public float seVolume = 1.0f;
+
     void Awake()
     {
         // シングルトンパターン（他スクリプトからアクセスするため）
@@ -82,7 +85,7 @@ public class SoundManager : MonoBehaviour
             source.Stop();
             Destroy(source);
             loopSESources.Remove(name);
-        }
+        } 
     }
 
     // 名前でClipを探す
@@ -97,6 +100,29 @@ public class SoundManager : MonoBehaviour
         return null;
     }
 
+
+    public void ApplyVolume()
+    {
+        bgmSource.volume = bgmVolume;
+        seSource.volume = seVolume;
+        foreach (var pair in loopSESources)
+        {
+            if (pair.Value != null)
+                pair.Value.volume = seVolume;
+        }
+    }
+
+    public void SetLoopSEVolume(string name, float volume)
+    {
+        if (loopSESources.TryGetValue(name, out AudioSource source))
+        {
+            source.volume = Mathf.Clamp01(volume);
+        }
+        else
+        {
+            Debug.LogWarning("サウンドが見つかりません");
+        }
+    }
     //public class TitleManager : MonoBehaviour
     //{
     //    void Start()

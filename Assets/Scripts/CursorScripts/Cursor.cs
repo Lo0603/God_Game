@@ -16,10 +16,26 @@ public class Cursor : MonoBehaviour
     {
         Vector3 move = Vector3.zero;
 
-        if (Input.GetKeyDown(KeyCode.W)) move.y += gridMove.y;
-        if (Input.GetKeyDown(KeyCode.S)) move.y -= gridMove.y;
-        if (Input.GetKeyDown(KeyCode.A)) move.x -= gridMove.x;
-        if (Input.GetKeyDown(KeyCode.D)) move.x += gridMove.x;
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            move.y += gridMove.y; 
+            SoundManager.Instance.PlaySE("カーソル移動");
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            move.y -= gridMove.y; 
+            SoundManager.Instance.PlaySE("カーソル移動");
+        } 
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            move.x -= gridMove.x;
+            SoundManager.Instance.PlaySE("カーソル移動");
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            move.x += gridMove.x; 
+            SoundManager.Instance.PlaySE("カーソル移動");
+        }
 
         if (move != Vector3.zero)
         {

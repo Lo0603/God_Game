@@ -76,7 +76,7 @@ public class PauseManager : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(toggleKey))
+		if (Input.GetKeyDown(toggleKey) || Input.GetKeyDown(KeyCode.JoystickButton7))
 			TogglePause(!isPauseOpen);
 
 		if (!isPauseOpen) return;

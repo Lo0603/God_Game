@@ -63,7 +63,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1
+  orthographic size: 25
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -102,8 +102,8 @@ MonoBehaviour:
   cam: {fileID: 7297069061040114563}
   tileWidth: 5
   tileHeight: 5
-  mapWidthInTiles: 32
-  mapHeightInTiles: 18
+  mapWidthInTiles: 18
+  mapHeightInTiles: 10
 --- !u!114 &7297069061040114623
 MonoBehaviour:
   m_ObjectHideFlags: 0

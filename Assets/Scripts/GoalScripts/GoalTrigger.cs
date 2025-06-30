@@ -31,7 +31,9 @@ public class GoalTrigger : MonoBehaviour
 		{
 			Debug.Log("Goal!! Stage Clear!");
 
-			anim.SetBool("IsOpen",true);
+            SoundManager.Instance.PlaySE("ClearSound");
+
+            anim.SetBool("IsOpen",true);
 
             playerScript.StopMoving();
 			FindObjectOfType<CameraZoomController>().ZoomIn(other.transform);

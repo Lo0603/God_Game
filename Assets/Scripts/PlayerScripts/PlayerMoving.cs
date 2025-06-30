@@ -64,7 +64,7 @@ public class PlayerMoving : MonoBehaviour
 
     void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.JoystickButton1))
         {
             if (isMoving)
             {
@@ -152,6 +152,7 @@ public class PlayerMoving : MonoBehaviour
     void StartMoving()
     {
         SoundManager.Instance.PlayLoopSE("ロボの移動中");
+        SoundManager.Instance.SetLoopSEVolume("ロボの移動中", 0.5f);
         isMoving = true;
         stoppingSoon = false;
         anim.SetBool("isWalking", true);

@@ -10,7 +10,7 @@ public class ConveyorBelt : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.attachedRigidbody == null) return;
-
+        SoundManager.Instance.PlayLoopSE("ConveyorSound");
         // 월드 기준 이동 방향
         Vector2 worldDir = transform.rotation * new Vector3(moveDirection.x, moveDirection.y, 0f);
 
@@ -24,6 +24,11 @@ public class ConveyorBelt : MonoBehaviour
 
         // 위치 이동
         other.attachedRigidbody.MovePosition(other.attachedRigidbody.position + finalMoveDir * moveSpeed * Time.deltaTime);
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        SoundManager.Instance.StopLoopSE("ConveyorSound");
     }
 
     // 회전/반전 대응 함수

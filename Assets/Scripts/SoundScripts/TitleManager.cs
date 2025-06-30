@@ -10,9 +10,9 @@ public class TitleManager : MonoBehaviour
         {
             // すでに再生中かチェックしてから再生
             if (!SoundManager.Instance.bgmSource.isPlaying ||
-                SoundManager.Instance.bgmSource.clip.name != "ゆるやか１")
+                SoundManager.Instance.bgmSource.clip.name != "mainBGM")
             {
-                SoundManager.Instance.PlayBGM("ゆるやか１");
+                SoundManager.Instance.PlayBGM("mainBGM");
             }
         }
         else

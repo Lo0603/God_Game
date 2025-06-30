@@ -43,6 +43,7 @@ public class ButtonTrigger : MonoBehaviour
     {
         if (triggerTags.Contains(other.tag))
         {
+            SoundManager.Instance.PlaySE("ButtonSound");
             triggerCount++;
             spriteRenderer.sprite = pressedSprite;
 
