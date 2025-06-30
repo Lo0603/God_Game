@@ -24,6 +24,24 @@ EditorBuildSettings:
     path: Assets/Stage/stage2.unity
     guid: 5a123c7f20583a94093d2938b84a43d1
   - enabled: 1
+    path: Assets/Stage/stage3.unity
+    guid: be37ebe42b2eae9478cb4c08a5296df1
+  - enabled: 1
+    path: Assets/Stage/stage4.unity
+    guid: dfe3081dbe5ecd4449c84611a855001d
+  - enabled: 1
+    path: Assets/Stage/stage5.unity
+    guid: ea298a1ea59bb2c45b1d82a20b3b7bde
+  - enabled: 1
+    path: Assets/Stage/stage6.unity
+    guid: 41b1cd60c60214f4799a3c414b382740
+  - enabled: 1
     path: Assets/Stage/stage7.unity
     guid: 1004bd751ce701e4a9b25325098507e5
+  - enabled: 1
+    path: Assets/Stage/stage8.unity
+    guid: 76acaf9bd78dfb1428a9ecbe880a0031
+  - enabled: 1
+    path: Assets/Stage/stage9.unity
+    guid: a9208f06a67d4704c8676e15e6014ae3
   m_configObjects: {}
