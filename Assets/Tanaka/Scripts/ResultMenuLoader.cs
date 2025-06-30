@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 public class ResultMenuLoader : MonoBehaviour
 {
-	[Header("Menu Builder")]
-	[SerializeField] private GameObject resultCanvas;
 	[SerializeField] private MenuBuilder menuBuilder; // メニュー生成を行うビルダー
 
 	[Header("Button Sprites (Next, Select, Title)")]
@@ -18,27 +16,12 @@ public class ResultMenuLoader : MonoBehaviour
 
 	private List<MenuItemData> items; // メニュー項目を保持するリスト
 
-	private int totalStages = 10;  // 全ステージ数
+	private int totalStages = 9;  // 全ステージ数
 
-	private void Awake()
-	{
-		// Canvas は最初オフにしておく
-		if (resultCanvas != null)
-			resultCanvas.SetActive(false);
-	}
 
 	public void ShowResult(int currentStage)
 	{
-		if (resultCanvas == null || menuBuilder == null)
-		{
-			Debug.LogError("ResultMenuLoader: resultCanvas／menuBuilder をセットしてください");
-			return;
-		}
-
-		// 1) Canvas を表示
-		resultCanvas.SetActive(true);
-
-		// 2) メニュー項目を組み立て
+		// メニュー項目を組み立て
 		items = new List<MenuItemData>();
 		// Next は最終ステージ以外
 		if (currentStage < totalStages)
@@ -58,16 +41,16 @@ public class ResultMenuLoader : MonoBehaviour
 			() => SceneManager.LoadScene("Title")
 		));
 
-		// 3) ボタンを生成
+		// ボタンを生成
 		menuBuilder.BuildMenu(items);
 
-		// 4) 画像を当てる
+		// 画像を当てる
 		ApplyButtonImages();
 
-		// 5) 拡大エフェクト + キー移動ナビを設定
+		// 拡大エフェクト + キー移動ナビを設定
 		ApplyButtonScaleEffects();
 
-		// 6) 最初のボタンにフォーカス
+		// 最初のボタンにフォーカス
 		var firstBtn = menuBuilder.panelParent.GetChild(0).gameObject;
 		EventSystem.current.SetSelectedGameObject(firstBtn);
 		ExecuteEvents.Execute(
