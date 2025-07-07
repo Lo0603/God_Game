@@ -5,43 +5,43 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Tanaka/Scenes/Title.unity
     guid: 285d8ebddf9888f4baa4eb97b459784b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Tanaka/Scenes/Select.unity
     guid: 8595ef0b05ee64c41be943e65b8dc731
   - enabled: 0
     path: Assets/Tanaka/Scenes/Stage1.unity
     guid: 1f8d4da52bea5834394a760484121a48
-  - enabled: 1
+  - enabled: 0
     path: Assets/Tanaka/Scenes/LoadingScene.unity
     guid: 14e8d119a3880504cad395ed2e04e701
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/Stage1.unity
     guid: bd51bee723418354f832f9c2099c37c8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/stage2.unity
     guid: 5a123c7f20583a94093d2938b84a43d1
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/stage3.unity
     guid: be37ebe42b2eae9478cb4c08a5296df1
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/stage4.unity
     guid: dfe3081dbe5ecd4449c84611a855001d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/stage5.unity
     guid: ea298a1ea59bb2c45b1d82a20b3b7bde
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/stage6.unity
     guid: 41b1cd60c60214f4799a3c414b382740
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/stage7.unity
     guid: 1004bd751ce701e4a9b25325098507e5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/stage8.unity
     guid: 76acaf9bd78dfb1428a9ecbe880a0031
-  - enabled: 1
+  - enabled: 0
     path: Assets/Stage/stage9.unity
     guid: a9208f06a67d4704c8676e15e6014ae3
   m_configObjects: {}
